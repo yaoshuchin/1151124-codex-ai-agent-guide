@@ -126,8 +126,23 @@
 
   function applyFontSize(sizeClass) {
     currentFontSize = sizeClass;
+    
+    // 同步套用於 html 根節點與 body，驅動全站 rem 單位即時等比縮放
+    const root = document.documentElement;
+    root.classList.remove("font-md", "font-lg", "font-xl");
+    root.classList.add(sizeClass);
     document.body.classList.remove("font-md", "font-lg", "font-xl");
     document.body.classList.add(sizeClass);
+
+    // 明確設定 root font-size 確保所有瀏覽器 100% 即時重繪生效
+    if (sizeClass === "font-lg") {
+      root.style.fontSize = "19.5px";
+    } else if (sizeClass === "font-xl") {
+      root.style.fontSize = "23px";
+    } else {
+      root.style.fontSize = "16px";
+    }
+
     localStorage.setItem(FONT_STORAGE_KEY, sizeClass);
 
     document.querySelectorAll("[data-font-btn]").forEach((btn) => {
