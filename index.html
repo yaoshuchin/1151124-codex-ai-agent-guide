@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant" data-theme="dark" data-font="medium">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Agent 時代來臨 · Codex 打造超級小幫手 | 橘子老師實戰研習簡報</title>
+  <meta name="description" content="AI Agent 時代來臨，Codex 打造超級小幫手！橘子老師 2026 最新實戰研習簡報，涵蓋 Context Engineering、Skill 五層架構、試算表自動發信、財產報廢申請單與雲端自動排程出題。" />
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍊</text></svg>">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="deck.css" />
+</head>
+<body>
+
+  <!-- 門禁驗證防護 (Password Gate - 密碼 nato) -->
+  <div id="passwordGate">
+    <div class="gate-card">
+      <div class="gate-icon">🔒</div>
+      <h2 class="gate-title">專屬研習簡報門禁</h2>
+      <p class="gate-subtitle">AI Agent 時代來臨 · Codex 打造超級小幫手<br>請輸入通關密碼解鎖內容</p>
+      <form id="gateForm" class="gate-form">
+        <input type="password" id="gatePassword" class="gate-input" placeholder="請輸入通行碼" autofocus autocomplete="current-password" />
+        <button type="submit" class="gate-btn">立即驗證進入 ➔</button>
+      </form>
+      <div id="gateError" class="gate-error"></div>
+      <p class="gate-hint">💡 提示：本研習站點通行碼為 <strong>nato</strong></p>
+    </div>
+  </div>
+
+  <!-- 頂部吸頂控制列 (Sticky App Header) -->
+  <header class="app-header">
+    <div class="brand-group">
+      <span class="brand-badge">AGENT 2026</span>
+      <h1 class="brand-title">AI Agent 時代來臨 · Codex 打造超級小幫手</h1>
+      <span class="brand-sub">| 橘子老師實戰研習 (共 50 頁)</span>
+    </div>
+
+    <div class="toolbar-group">
+      <!-- 模式切換 -->
+      <div class="pill-group" title="模式切換">
+        <button class="pill-btn active" data-set-mode="present">📺 簡報投影</button>
+        <button class="pill-btn" data-set-mode="read">📖 卡片閱讀</button>
+      </div>
+
+      <!-- 字級縮放 (中、大、特大) -->
+      <div class="pill-group" title="字型大小切換">
+        <button class="pill-btn active" data-set-font="medium">中</button>
+        <button class="pill-btn" data-set-font="large">大</button>
+        <button class="pill-btn" data-set-font="xlarge">特大</button>
+      </div>
+
+      <!-- 四色布景主題 (淺、深、綠、藍) -->
+      <div class="pill-group" title="四色布景切換">
+        <button class="pill-btn" data-set-theme="light">淺</button>
+        <button class="pill-btn active" data-set-theme="dark">深</button>
+        <button class="pill-btn" data-set-theme="green">綠</button>
+        <button class="pill-btn" data-set-theme="blue">藍</button>
+      </div>
+
+      <!-- 重新上鎖 -->
+      <button id="relockBtn" class="action-btn" title="鎖定網站">🔒 上鎖</button>
+    </div>
+  </header>
+
+  <!-- 單元分頁標籤導航列 (Category Tabs) -->
+  <nav class="tabs-nav-bar">
+    <button class="tab-item active" data-unit="all">
+      📌 全部投影片 <span class="tab-count">50</span>
+    </button>
+    <button class="tab-item" data-unit="1">
+      🚀 1. 講師與社群前言 <span class="tab-count">5</span>
+    </button>
+    <button class="tab-item" data-unit="2">
+      🛠️ 2. Codex基礎與指令工具 <span class="tab-count">7</span>
+    </button>
+    <button class="tab-item" data-unit="3">
+      📐 3. Context工程與Skill架構 <span class="tab-count">13</span>
+    </button>
+    <button class="tab-item" data-unit="4">
+      📊 4. 實戰一 · 試算表與郵件通知 <span class="tab-count">11</span>
+    </button>
+    <button class="tab-item" data-unit="5">
+      ⚡ 5. 實戰二與三 · 報廢單與排程出題 <span class="tab-count">14</span>
+    </button>
+  </nav>
+
+  <!-- 主內容區 (Main Container) -->
+  <main class="app-main">
+    
+    <!-- 模式 1：16:9 簡報投影模式 -->
+    <section id="presentationMode">
+      <div id="stageWrapper" class="stage-wrapper">
+        <img id="slideScreen" class="slide-screen" src="assets/slides/slide_01.png" alt="Slide 1" />
+        <canvas id="whiteboardCanvas" class="inactive"></canvas>
+        <div class="stage-info-overlay">
+          <span id="stageBadge" class="stage-badge">首頁封面</span>
+          <span id="stageSlideTitle" class="stage-slide-title">AI Agent 時代來臨 · Codex 打造超級小幫手</span>
+        </div>
+      </div>
+
+      <!-- 簡報底部控制列 -->
+      <div class="deck-controls">
+        <div class="nav-arrow-group">
+          <button id="prevSlideBtn" class="deck-btn" title="上一頁 (← / PageUp)">◀ 上一頁</button>
+          <span id="slideIndicator" class="slide-indicator">1 / 50</span>
+          <button id="nextSlideBtn" class="deck-btn" title="下一頁 (→ / PageDown / Space)">下一頁 ▶</button>
+        </div>
+
+        <!-- 白板畫筆工具列 -->
+        <div class="whiteboard-bar">
+          <button id="togglePenBtn" class="tool-icon-btn" title="啟用白板畫筆">✏️ 畫筆</button>
+          <input type="color" id="penColorPicker" class="color-picker-input" value="#38bdf8" title="畫筆顏色" />
+          <button id="toggleEraserBtn" class="tool-icon-btn" title="橡皮擦">🧹 擦拭</button>
+          <button id="clearPenBtn" class="tool-icon-btn" title="清除所有塗鴉">🗑️ 清空</button>
+        </div>
+
+        <!-- 播放與全螢幕 -->
+        <div class="nav-arrow-group">
+          <button id="autoPlayBtn" class="deck-btn"><span>▶ 自動播放</span></button>
+          <button id="fullscreenBtn" class="deck-btn"><span>⛶ 全螢幕</span></button>
+        </div>
+      </div>
+
+      <!-- 縮圖導覽列 -->
+      <div id="thumbnailsStrip" class="thumbnails-strip">
+        
+    <div class="thumb-card" data-thumb-page="1">
+      <img src="assets/slides/slide_01.png" alt="Slide 1" loading="lazy" />
+      <span class="thumb-num">01</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="2">
+      <img src="assets/slides/slide_02.png" alt="Slide 2" loading="lazy" />
+      <span class="thumb-num">02</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="3">
+      <img src="assets/slides/slide_03.png" alt="Slide 3" loading="lazy" />
+      <span class="thumb-num">03</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="4">
+      <img src="assets/slides/slide_04.png" alt="Slide 4" loading="lazy" />
+      <span class="thumb-num">04</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="5">
+      <img src="assets/slides/slide_05.png" alt="Slide 5" loading="lazy" />
+      <span class="thumb-num">05</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="6">
+      <img src="assets/slides/slide_06.png" alt="Slide 6" loading="lazy" />
+      <span class="thumb-num">06</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="7">
+      <img src="assets/slides/slide_07.png" alt="Slide 7" loading="lazy" />
+      <span class="thumb-num">07</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="8">
+      <img src="assets/slides/slide_08.png" alt="Slide 8" loading="lazy" />
+      <span class="thumb-num">08</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="9">
+      <img src="assets/slides/slide_09.png" alt="Slide 9" loading="lazy" />
+      <span class="thumb-num">09</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="10">
+      <img src="assets/slides/slide_10.png" alt="Slide 10" loading="lazy" />
+      <span class="thumb-num">10</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="11">
+      <img src="assets/slides/slide_11.png" alt="Slide 11" loading="lazy" />
+      <span class="thumb-num">11</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="12">
+      <img src="assets/slides/slide_12.png" alt="Slide 12" loading="lazy" />
+      <span class="thumb-num">12</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="13">
+      <img src="assets/slides/slide_13.png" alt="Slide 13" loading="lazy" />
+      <span class="thumb-num">13</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="14">
+      <img src="assets/slides/slide_14.png" alt="Slide 14" loading="lazy" />
+      <span class="thumb-num">14</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="15">
+      <img src="assets/slides/slide_15.png" alt="Slide 15" loading="lazy" />
+      <span class="thumb-num">15</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="16">
+      <img src="assets/slides/slide_16.png" alt="Slide 16" loading="lazy" />
+      <span class="thumb-num">16</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="17">
+      <img src="assets/slides/slide_17.png" alt="Slide 17" loading="lazy" />
+      <span class="thumb-num">17</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="18">
+      <img src="assets/slides/slide_18.png" alt="Slide 18" loading="lazy" />
+      <span class="thumb-num">18</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="19">
+      <img src="assets/slides/slide_19.png" alt="Slide 19" loading="lazy" />
+      <span class="thumb-num">19</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="20">
+      <img src="assets/slides/slide_20.png" alt="Slide 20" loading="lazy" />
+      <span class="thumb-num">20</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="21">
+      <img src="assets/slides/slide_21.png" alt="Slide 21" loading="lazy" />
+      <span class="thumb-num">21</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="22">
+      <img src="assets/slides/slide_22.png" alt="Slide 22" loading="lazy" />
+      <span class="thumb-num">22</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="23">
+      <img src="assets/slides/slide_23.png" alt="Slide 23" loading="lazy" />
+      <span class="thumb-num">23</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="24">
+      <img src="assets/slides/slide_24.png" alt="Slide 24" loading="lazy" />
+      <span class="thumb-num">24</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="25">
+      <img src="assets/slides/slide_25.png" alt="Slide 25" loading="lazy" />
+      <span class="thumb-num">25</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="26">
+      <img src="assets/slides/slide_26.png" alt="Slide 26" loading="lazy" />
+      <span class="thumb-num">26</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="27">
+      <img src="assets/slides/slide_27.png" alt="Slide 27" loading="lazy" />
+      <span class="thumb-num">27</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="28">
+      <img src="assets/slides/slide_28.png" alt="Slide 28" loading="lazy" />
+      <span class="thumb-num">28</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="29">
+      <img src="assets/slides/slide_29.png" alt="Slide 29" loading="lazy" />
+      <span class="thumb-num">29</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="30">
+      <img src="assets/slides/slide_30.png" alt="Slide 30" loading="lazy" />
+      <span class="thumb-num">30</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="31">
+      <img src="assets/slides/slide_31.png" alt="Slide 31" loading="lazy" />
+      <span class="thumb-num">31</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="32">
+      <img src="assets/slides/slide_32.png" alt="Slide 32" loading="lazy" />
+      <span class="thumb-num">32</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="33">
+      <img src="assets/slides/slide_33.png" alt="Slide 33" loading="lazy" />
+      <span class="thumb-num">33</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="34">
+      <img src="assets/slides/slide_34.png" alt="Slide 34" loading="lazy" />
+      <span class="thumb-num">34</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="35">
+      <img src="assets/slides/slide_35.png" alt="Slide 35" loading="lazy" />
+      <span class="thumb-num">35</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="36">
+      <img src="assets/slides/slide_36.png" alt="Slide 36" loading="lazy" />
+      <span class="thumb-num">36</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="37">
+      <img src="assets/slides/slide_37.png" alt="Slide 37" loading="lazy" />
+      <span class="thumb-num">37</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="38">
+      <img src="assets/slides/slide_38.png" alt="Slide 38" loading="lazy" />
+      <span class="thumb-num">38</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="39">
+      <img src="assets/slides/slide_39.png" alt="Slide 39" loading="lazy" />
+      <span class="thumb-num">39</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="40">
+      <img src="assets/slides/slide_40.png" alt="Slide 40" loading="lazy" />
+      <span class="thumb-num">40</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="41">
+      <img src="assets/slides/slide_41.png" alt="Slide 41" loading="lazy" />
+      <span class="thumb-num">41</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="42">
+      <img src="assets/slides/slide_42.png" alt="Slide 42" loading="lazy" />
+      <span class="thumb-num">42</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="43">
+      <img src="assets/slides/slide_43.png" alt="Slide 43" loading="lazy" />
+      <span class="thumb-num">43</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="44">
+      <img src="assets/slides/slide_44.png" alt="Slide 44" loading="lazy" />
+      <span class="thumb-num">44</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="45">
+      <img src="assets/slides/slide_45.png" alt="Slide 45" loading="lazy" />
+      <span class="thumb-num">45</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="46">
+      <img src="assets/slides/slide_46.png" alt="Slide 46" loading="lazy" />
+      <span class="thumb-num">46</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="47">
+      <img src="assets/slides/slide_47.png" alt="Slide 47" loading="lazy" />
+      <span class="thumb-num">47</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="48">
+      <img src="assets/slides/slide_48.png" alt="Slide 48" loading="lazy" />
+      <span class="thumb-num">48</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="49">
+      <img src="assets/slides/slide_49.png" alt="Slide 49" loading="lazy" />
+      <span class="thumb-num">49</span>
+    </div>
+    
+    <div class="thumb-card" data-thumb-page="50">
+      <img src="assets/slides/slide_50.png" alt="Slide 50" loading="lazy" />
+      <span class="thumb-num">50</span>
+    </div>
+    
+      </div>
+    </section>
+
+    <!-- 模式 2：卡片式圖文閱讀模式 -->
+    <section id="readingMode" style="display: none;">
+      <div class="cards-grid">
+        
+    <article class="slide-card" data-card-unit="1">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_01.png" alt="AI Agent 時代來臨 · Codex 打造超級小幫手" loading="lazy" />
+        <span class="card-page-badge">P.01</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">講師介紹與社群前言</span>
+          <span class="card-type-badge">首頁封面</span>
+        </div>
+        <h3 class="card-title">AI Agent 時代來臨 · Codex 打造超級小幫手</h3>
+        <p class="card-sub">橘子老師 2026 最新 AI Agent 實戰研習簡報</p>
+        <p class="card-desc">本研習聚焦於 OpenAI Codex 打造教育與行政超級小幫手。從 Prompt Engineering 走向 Context Engineering 與 Loop Engineering，透過自訂 SKILL、工作流程自動化與排程，讓 AI Agent 真正成為教師的日常生產力夥伴。</p>
+        <ul class="key-points-list"><li class="key-point-item">AI Agent 時代全面降臨：從單純對話走向自動化任務代理</li><li class="key-point-item">Codex 打造超級小幫手：專案知識管理與自訂 Skill</li><li class="key-point-item">教育行政與課堂實務三大落地場景完整解析</li></ul>
+        <div class="card-links-box"><a href="https://reurl.cc/1lp4K8" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 簡報縮址</a><a href="https://www.facebook.com/ju.laoshi" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 橘子老師個人 FB</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="1">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_02.png" alt="講師個人專頁 · 橘子老師" loading="lazy" />
+        <span class="card-page-badge">P.02</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">講師介紹與社群前言</span>
+          <span class="card-type-badge">講師專頁</span>
+        </div>
+        <h3 class="card-title">講師個人專頁 · 橘子老師</h3>
+        <p class="card-sub">專注於 AI 教育創新、自動化工作流與 Agent 實務研發</p>
+        <p class="card-desc">橘子老師個人 Facebook 專頁連結，定期分享第一線 AI 教育創新、提示詞心法與跨工具串接實務，歡迎各校教育夥伴交流互動。</p>
+        <ul class="key-points-list"><li class="key-point-item">長期深耕教育科技與中小學 AI 落地應用</li><li class="key-point-item">研發 Google Gemini, OpenAI Codex, NotebookLM 實戰工作流</li><li class="key-point-item">推廣「每天開心玩 Ai」教育共學圈</li></ul>
+        <div class="card-links-box"><a href="https://www.facebook.com/ju.laoshi" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 Facebook：橘子老師</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="1">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_03.png" alt="橘子老師教室 · 官方粉絲專頁" loading="lazy" />
+        <span class="card-page-badge">P.03</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">講師介紹與社群前言</span>
+          <span class="card-type-badge">官方粉專</span>
+        </div>
+        <h3 class="card-title">橘子老師教室 · 官方粉絲專頁</h3>
+        <p class="card-sub">教學資源、提示詞包、研習教材第一手發布平台</p>
+        <p class="card-desc">「橘子老師教室」粉絲專頁集結了大量開源提示詞、自動化教材與教師研習精華，是教師學習 AI 工具與數位轉型的最佳起點。</p>
+        <ul class="key-points-list"><li class="key-point-item">提供完整研習講義與提示詞開源包</li><li class="key-point-item">中小學教案實例與行政自動化模板分享</li><li class="key-point-item">持續追蹤最新生成式 AI 技術於教學現場的應用</li></ul>
+        <div class="card-links-box"><a href="https://www.facebook.com/profile.php?id=61580433065847" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 FB 粉專：橘子老師教室</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="1">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_04.png" alt="加入「每天開心玩Ai」教師共學群" loading="lazy" />
+        <span class="card-page-badge">P.04</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">講師介紹與社群前言</span>
+          <span class="card-type-badge">LINE 社群</span>
+        </div>
+        <h3 class="card-title">加入「每天開心玩Ai」教師共學群</h3>
+        <p class="card-sub">社群專屬通關密碼：happyai</p>
+        <p class="card-desc">加入 LINE 社群「每天開心玩Ai」，掌握研習即時互動、檔案下載密鑰與課後諮詢。入群驗證問題請填寫今日通關密碼：happyai。</p>
+        <ul class="key-points-list"><li class="key-point-item">LINE 社群專屬入群密碼：happyai</li><li class="key-point-item">數千位熱血教育工作者共學交流平台</li><li class="key-point-item">每日分享最新 AI 工具與免費教學資源</li></ul>
+        <div class="card-links-box"><a href="https://line.me/ti/g2/WcNwA_0Zf-ciDHCVodeEpFFBLd0PmGwKlhRprg?utm_source=invitation&amp;utm_medium=link_copy&amp;utm_campaign=default" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 加入 LINE 社群（通關密碼: happyai）</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="1">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_05.png" alt="邁向 AI Agent 時代 · 研習架構總覽" loading="lazy" />
+        <span class="card-page-badge">P.05</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">講師介紹與社群前言</span>
+          <span class="card-type-badge">架構總覽</span>
+        </div>
+        <h3 class="card-title">邁向 AI Agent 時代 · 研習架構總覽</h3>
+        <p class="card-sub">從工具使用者蛻變為 AI Agent 架構師</p>
+        <p class="card-desc">今日研習核心目標：帶領老師們認識 OpenAI Codex 核心功能、掌握三階段工程演進、建立專屬工作區規範，並親手實作試算表通知信、財產報廢單與雲端自動排程出題 Skill。</p>
+        <ul class="key-points-list"><li class="key-point-item">認識 Codex 執行環境與指令互動模式</li><li class="key-point-item">理解 Prompt -&gt; Context -&gt; Loop 三階段工程思維</li><li class="key-point-item">三大實戰：試算表郵件、報廢表單、排程出題</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_06.png" alt="什麼是 Codex？認識下一代 AI Agent" loading="lazy" />
+        <span class="card-page-badge">P.06</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">概念解析</span>
+        </div>
+        <h3 class="card-title">什麼是 Codex？認識下一代 AI Agent</h3>
+        <p class="card-sub">兼具代碼理解、終端機操作與工作流自動化的智能核心</p>
+        <p class="card-desc">OpenAI Codex 不只是文字生成模型，它能真正理解軟體專案結構、執行環境指令、呼叫外部工具與操作檔案系統，是邁向自主 Agent 的關鍵基石。</p>
+        <ul class="key-points-list"><li class="key-point-item">超越傳統 Chatbot：具備檔案讀寫與指令執行權限</li><li class="key-point-item">專案級上下文感知：掌握整個工作區檔案結構</li><li class="key-point-item">支援工具外掛（Tools/Plugins/MCP）與自訂技能</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_07.png" alt="Codex 官方入口與註冊指引" loading="lazy" />
+        <span class="card-page-badge">P.07</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">官方入口</span>
+        </div>
+        <h3 class="card-title">Codex 官方入口與註冊指引</h3>
+        <p class="card-sub">前往官方網站探索 Codex 專案介面</p>
+        <p class="card-desc">登入 OpenAI Codex 官方專案頁面（openai.com/zh-Hant/codex/），探索專案儀表板、工作區管理與開發者工具支援。</p>
+        <ul class="key-points-list"><li class="key-point-item">訪問官方網址：openai.com/zh-Hant/codex/</li><li class="key-point-item">建立個人或團隊工作區環境</li><li class="key-point-item">檢查帳號權限與模型支援清單</li></ul>
+        <div class="card-links-box"><a href="https://openai.com/zh-Hant/codex/" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 OpenAI Codex 官方網址</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_08.png" alt="環境建立與專案介面導覽" loading="lazy" />
+        <span class="card-page-badge">P.08</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">介面導覽</span>
+        </div>
+        <h3 class="card-title">環境建立與專案介面導覽</h3>
+        <p class="card-sub">熟悉 Codex 專案設定與主視窗佈局</p>
+        <p class="card-desc">介紹 Codex 工作視窗三大核心區域：左側專案檔案樹、中央對話與執行終端、右側上下文與檢查面板，並示範基本互動流程。</p>
+        <ul class="key-points-list"><li class="key-point-item">掌握左側檔案導航與目錄組織</li><li class="key-point-item">終端機對話互動面板與即時反饋</li><li class="key-point-item">專案工作目錄與全域設定同步</li></ul>
+        <div class="card-links-box"><a href="https://openai.com/zh-Hant/codex/" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 Codex 官網</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_09.png" alt="外掛工具安裝 · 擴充 Agent 超能力" loading="lazy" />
+        <span class="card-page-badge">P.09</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">外掛安裝</span>
+        </div>
+        <h3 class="card-title">外掛工具安裝 · 擴充 Agent 超能力</h3>
+        <p class="card-sub">把需要用到的外掛工具與技能全部裝上去</p>
+        <p class="card-desc">工欲善其事，必先利其器！在 Codex 中安裝必要的工具外掛（MCP 工具、Google Workspace 串接、自動化套件），讓 Agent 具備操作外部應用的能力。</p>
+        <ul class="key-points-list"><li class="key-point-item">外掛市集與自訂工具串接支援</li><li class="key-point-item">安裝 Google Drive, Gmail, Sheets 等生產力外掛</li><li class="key-point-item">賦予 Agent 讀取試算表與發送信件的實際行動力</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_10.png" alt="權限設定與安全防護機制" loading="lazy" />
+        <span class="card-page-badge">P.10</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">安全權限</span>
+        </div>
+        <h3 class="card-title">權限設定與安全防護機制</h3>
+        <p class="card-sub">明確界定 Agent 的讀取、寫入與指令執行邊界</p>
+        <p class="card-desc">在賦予 Agent 自動化權限的同時，需妥善配置安全性策略。確認哪些操作允許自動執行、哪些高敏感動作（如刪除、郵件發送）需經過確認或安全隔離。</p>
+        <ul class="key-points-list"><li class="key-point-item">設定檔案讀取與寫入目錄權限</li><li class="key-point-item">網路存取與外部 API 授權管控</li><li class="key-point-item">平衡自動化執行效率與資料隱私安全</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_11.png" alt="快捷斜線指令與任務控制" loading="lazy" />
+        <span class="card-page-badge">P.11</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">指令操作</span>
+        </div>
+        <h3 class="card-title">快捷斜線指令與任務控制</h3>
+        <p class="card-sub">輸入「/」開啟指令選單，掌控 Agent 生命週期</p>
+        <p class="card-desc">在輸入框輸入「/」即可叫出快捷指令面板。包含任務終止（/kill）、技能調用（/skill）、模型切換等快速功能，提升操控效率。</p>
+        <ul class="key-points-list"><li class="key-point-item">輸入「/」：快速觸發內建指令與自訂技能</li><li class="key-point-item">終止失控或耗時任務：及時使用終止指令</li><li class="key-point-item">快速查閱當前工作階段可用之能力選單</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="2">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_12.png" alt="技能調用與底層模型切換" loading="lazy" />
+        <span class="card-page-badge">P.12</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Codex 基礎與指令工具</span>
+          <span class="card-type-badge">模型切換</span>
+        </div>
+        <h3 class="card-title">技能調用與底層模型切換</h3>
+        <p class="card-sub">靈活選用最強推論模型與特定專屬 SKILL</p>
+        <p class="card-desc">依照任務難度與預算考量，隨時透過指令或介面選單切換適合的語言模型，並能指定特定 SKILL 進行高精度專業作業。</p>
+        <ul class="key-points-list"><li class="key-point-item">輸入「/」選取目標 SKILL 模組</li><li class="key-point-item">根據任務複雜度選配最佳推論模型</li><li class="key-point-item">兼顧執行速度、成本與推理精確度</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_13.png" alt="三大工程進化：AI 應用的思維躍遷" loading="lazy" />
+        <span class="card-page-badge">P.13</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">工程演進</span>
+        </div>
+        <h3 class="card-title">三大工程進化：AI 應用的思維躍遷</h3>
+        <p class="card-sub">Prompt Engineering ➔ Context Engineering ➔ Loop Engineering</p>
+        <p class="card-desc">AI 開發已歷經三代變革：從第一代單向「提示詞工程（Prompt）」、第二代圍繞專案記憶的「脈絡工程（Context）」，邁向第三代具備自主反饋閉環的「迴圈工程（Loop）」。</p>
+        <ul class="key-points-list"><li class="key-point-item">第一階段 Prompt Engineering：單次對話、依賴精美提示詞</li><li class="key-point-item">第二階段 Context Engineering：以檔案/記憶/架構為核心</li><li class="key-point-item">第三階段 Loop Engineering：具備自我修正與自動反饋閉環</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_14.png" alt="Codex 核心檔案體系與標準" loading="lazy" />
+        <span class="card-page-badge">P.14</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">核心檔案</span>
+        </div>
+        <h3 class="card-title">Codex 核心檔案體系與標準</h3>
+        <p class="card-sub">專案特別關注之骨幹：AGENTS.md、.agents/skills/、SKILL.md</p>
+        <p class="card-desc">在專案中，Codex 特別依循的核心檔案規範包含：規範工作方式的 AGENTS.md、存放技能的 .agents/skills/，以及給人類維護的 README.md、GOALS.md 等實用指引。</p>
+        <ul class="key-points-list"><li class="key-point-item">AGENTS.md：Agent 的最高憲法與行為準則</li><li class="key-point-item">.agents/skills/SKILL.md：模組化技能的定義與操作手冊</li><li class="key-point-item">README.md：專為「人類開發者」撰寫的專案說明書</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_15.png" alt="四大多維文件：專案知識四角柱" loading="lazy" />
+        <span class="card-page-badge">P.15</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">知識文件</span>
+        </div>
+        <h3 class="card-title">四大多維文件：專案知識四角柱</h3>
+        <p class="card-sub">README.md、GOALS.md、PLANS.md、PROMPTS.md</p>
+        <p class="card-desc">四大多維文件構建了專案的完整脈絡：README（專案說明書）、GOALS（我們到底要做出什麼？）、PLANS（我要怎麼走？）、PROMPTS（專案常用的任務指令庫）。</p>
+        <ul class="key-points-list"><li class="key-point-item">README.md：給「人」看的專案說明書</li><li class="key-point-item">GOALS.md：定義最終成果與產出規格</li><li class="key-point-item">PLANS.md：規劃分階段執行里程碑與路徑</li><li class="key-point-item">PROMPTS.md：保存專案專用的高效指令庫</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_16.png" alt="專案知識盤點與 Agent 記憶整理" loading="lazy" />
+        <span class="card-page-badge">P.16</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">記憶固化</span>
+        </div>
+        <h3 class="card-title">專案知識盤點與 Agent 記憶整理</h3>
+        <p class="card-sub">將目前工作區脈絡固化，實現永續開發與跨代理接力</p>
+        <p class="card-desc">示範標準提示詞：要求 Codex 對目前專案進行「完整知識盤點與記憶整理」。讀取實際程式、設定、既有 Skills，將成果整理保存，以便下次快速接軌。</p>
+        <ul class="key-points-list"><li class="key-point-item">避免記憶遺忘：將隱性經驗沉澱為顯性文件</li><li class="key-point-item">盤點實際程式碼、外部配置與工作流程</li><li class="key-point-item">讓未來的任何 Agent 能在數秒內無縫接手專案</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_17.png" alt="知識整理標準提示詞詳解 (一)" loading="lazy" />
+        <span class="card-page-badge">P.17</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">提示詞範本</span>
+        </div>
+        <h3 class="card-title">知識整理標準提示詞詳解 (一)</h3>
+        <p class="card-sub">目標導向的知識盤點指令架構</p>
+        <p class="card-desc">拆解知識整理指令的前半段：要求 Agent 不是單純建立空白文件，而是深入分析專案中的各個模組，提取核心功能、依賴關係與資料流程。</p>
+        <ul class="key-points-list"><li class="key-point-item">嚴禁生成空白樣板，要求基於專案現況真實提取</li><li class="key-point-item">分析系統模組與依賴關係</li><li class="key-point-item">規範盤點深度與輸出格式</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_18.png" alt="知識整理標準提示詞詳解 (二)" loading="lazy" />
+        <span class="card-page-badge">P.18</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">提示詞範本</span>
+        </div>
+        <h3 class="card-title">知識整理標準提示詞詳解 (二)</h3>
+        <p class="card-sub">建立跨階段延續性與知識防坍塌技術</p>
+        <p class="card-desc">拆解知識整理指令的後半段：聚焦於如何保存開發脈絡與架構決策，確保無論專案經歷多少輪對話，核心邏輯與工程規範永不偏離。</p>
+        <ul class="key-points-list"><li class="key-point-item">記錄關鍵架構決策與設計原則</li><li class="key-point-item">沉澱常見踩坑紀錄與最佳解決路徑</li><li class="key-point-item">確保多輪迭代後系統結構依然穩健防坍塌</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_19.png" alt="建立與維護 AGENTS.md 準則" loading="lazy" />
+        <span class="card-page-badge">P.19</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">行為準則</span>
+        </div>
+        <h3 class="card-title">建立與維護 AGENTS.md 準則</h3>
+        <p class="card-sub">若已存在請整合更新，切勿無情直接覆蓋</p>
+        <p class="card-desc">AGENTS.md 是專案的靈魂。如果已存在，應先讀取原內容，將新確認的規則、架構與開發知識增量整合進去，保持規則的演進與連貫性。</p>
+        <ul class="key-points-list"><li class="key-point-item">AGENTS.md 載明 Agent 的工作職責與編碼慣例</li><li class="key-point-item">更新原則：讀取既有內容 ➔ 增量擴充 ➔ 避免粗暴覆蓋</li><li class="key-point-item">記錄使用者偏好與專案特定約束條件</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_20.png" alt="檢查與規劃 .agents/skills/ 技能庫" loading="lazy" />
+        <span class="card-page-badge">P.20</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">技能規劃</span>
+        </div>
+        <h3 class="card-title">檢查與規劃 .agents/skills/ 技能庫</h3>
+        <p class="card-sub">識別具備重複執行、固定流程的工作並抽象成 Skill</p>
+        <p class="card-desc">分析專案中哪些任務適合封裝成 Skill：具備明確 SOP、需要呼叫特定 API、或每次重複輸入繁瑣提示詞的操作，都是 Skill 的最佳候選。</p>
+        <ul class="key-points-list"><li class="key-point-item">檢查 .agents/skills/ 目錄結構，若無則自動建立</li><li class="key-point-item">找出「重複出現、流程固定、需要專門知識」的任務</li><li class="key-point-item">將零散的操作經驗封裝為可隨時調用的標準模組</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_21.png" alt="SKILL.md 標準結構：Frontmatter 規範" loading="lazy" />
+        <span class="card-page-badge">P.21</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">Skill規格</span>
+        </div>
+        <h3 class="card-title">SKILL.md 標準結構：Frontmatter 規範</h3>
+        <p class="card-sub">每個 Skill 資料夾的必備靈魂核心</p>
+        <p class="card-desc">每個 Skill 必須包含 Frontmatter（name, description）與完整的 Markdown 操作指引，詳細說明觸發條件、輸入參數與預期輸出格式。</p>
+        <ul class="key-points-list"><li class="key-point-item">Frontmatter 包含清晰的 name 與用途 description</li><li class="key-point-item">定義詳細的執行步驟 SOP 與防錯檢核清單</li><li class="key-point-item">規範輸入規格與產出成果的驗證標準</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_22.png" alt="Skill 資料夾標準三位一體架構" loading="lazy" />
+        <span class="card-page-badge">P.22</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">資料夾結構</span>
+        </div>
+        <h3 class="card-title">Skill 資料夾標準三位一體架構</h3>
+        <p class="card-sub">SKILL.md + scripts/ + references/</p>
+        <p class="card-desc">標準 Skill 資料夾架構：根目錄 SKILL.md（操作手冊）、scripts/（可執行的腳本工具）、references/（查閱之參考知識庫或範本）。</p>
+        <ul class="key-points-list"><li class="key-point-item">.agents/skills/&lt;skill-name&gt;/ 根目錄存放 SKILL.md</li><li class="key-point-item">scripts/ 目錄存放 Python/Shell 自動化執行腳本</li><li class="key-point-item">references/ 目錄存放規格手冊、資料結構與範本檔</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_23.png" alt="三位一體職責分工深度解析" loading="lazy" />
+        <span class="card-page-badge">P.23</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">架構解析</span>
+        </div>
+        <h3 class="card-title">三位一體職責分工深度解析</h3>
+        <p class="card-sub">操作說明、執行工具、查閱知識的完美結合</p>
+        <p class="card-desc">SKILL.md 是 Agent 的大腦操作指引；scripts 是 Agent 的雙手（能被呼叫執行的工具）；references 是 Agent 的百科全書（查閱的背景脈絡）。</p>
+        <ul class="key-points-list"><li class="key-point-item">SKILL.md = Agent 的大腦操作指引與任務觸發器</li><li class="key-point-item">scripts/ = Agent 的實體執行工具與外部串接腳本</li><li class="key-point-item">references/ = Agent 執行任務時查閱的權威知識依據</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_24.png" alt="Codex 專案五層架構全景圖" loading="lazy" />
+        <span class="card-page-badge">P.24</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">五層架構</span>
+        </div>
+        <h3 class="card-title">Codex 專案五層架構全景圖</h3>
+        <p class="card-sub">規則、能力、方向、知識、執行資源五位一體</p>
+        <p class="card-desc">橘子老師提出的 Codex 5 層金字塔：🧠 Agent 規則 (AGENTS.md) ➔ 🧩 Agent 能力 (.agents/skills/) ➔ 🧭 Agent 方向 (GOALS/PLANS) ➔ 📚 專案知識 (README) ➔ 📦 執行資源 (scripts/references)。附完整提示詞下載。</p>
+        <ul class="key-points-list"><li class="key-point-item">🧠 Agent 規則：告訴 Codex「怎麼工作」</li><li class="key-point-item">🧩 Agent 能力：賦予 Codex「能做什麼」</li><li class="key-point-item">🧭 Agent 方向：明確指引「要往哪裡去」</li><li class="key-point-item">📚 專案知識：提供「專案的完整脈絡」</li><li class="key-point-item">📦 執行資源：裝備「實際動手工具」</li></ul>
+        <div class="card-links-box"><a href="https://drive.google.com/file/d/1u_bcxq6y_-2MtvI2mfo2Mr9OvCLDVb6R/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 下載 5 層架構提示詞（Google Drive）</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="3">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_25.png" alt="讓 Codex 深度記憶當前專案指令" loading="lazy" />
+        <span class="card-page-badge">P.25</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">Context 工程與 Skill 架構五層論</span>
+          <span class="card-type-badge">記憶指令</span>
+        </div>
+        <h3 class="card-title">讓 Codex 深度記憶當前專案指令</h3>
+        <p class="card-sub">「讓 Codex 記住目前這個專案」標準 Prompt</p>
+        <p class="card-desc">分享一段經過實戰驗證的高效提示詞：一鍵要求 Codex 分析現存功能、程式規則、開發流程、UI 規範與測試方式，自動沉澱為系統性檔案。</p>
+        <ul class="key-points-list"><li class="key-point-item">全面檢視現有目錄結構與相依套件</li><li class="key-point-item">提取程式設計風格與資料傳遞模式</li><li class="key-point-item">將所有經驗轉化為永久保存的 Context 檔案</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_26.png" alt="實戰一 · 試算表處理與自動化通知" loading="lazy" />
+        <span class="card-page-badge">P.26</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">實戰開場</span>
+        </div>
+        <h3 class="card-title">實戰一 · 試算表處理與自動化通知</h3>
+        <p class="card-sub">結合 Google 表單、試算表與 Gmail 的實用教育場景</p>
+        <p class="card-desc">學校常常需要透過 Google 表單收集資訊（如帳號申請、資料調查），本單元示範如何讓 Codex 讀取試算表、進行邏輯篩選，並自動寄發個人化通知信件。</p>
+        <ul class="key-points-list"><li class="key-point-item">串接 Google 表單與雲端試算表</li><li class="key-point-item">以自然語言下達多條件資料篩選規則</li><li class="key-point-item">自動套印姓名與資料，批次發送專屬郵件</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_27.png" alt="建立資料收集表單 · 範例展示" loading="lazy" />
+        <span class="card-page-badge">P.27</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">表單連結</span>
+        </div>
+        <h3 class="card-title">建立資料收集表單 · 範例展示</h3>
+        <p class="card-sub">線上表單欄位設計與即時收集機制</p>
+        <p class="card-desc">展示用於本次實作示範的 Google 表單。包含教師姓名、電子郵件、身分別代碼等關鍵欄位，提交後即時匯整至 Google 試算表。</p>
+        <ul class="key-points-list"><li class="key-point-item">設計包含身份代碼的標準表單</li><li class="key-point-item">即時將填報紀錄同步至後端試算表</li><li class="key-point-item">提供學員實測填報，獲取真實測試數據</li></ul>
+        <div class="card-links-box"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeRmT0FAdyNIt3wGYF7_MwJ9YYApgOb3ctjLD5wZGnUFlB7SA/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 實作填報表單連結（Google 表單）</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_28.png" alt="查看表單填答與試算表結構" loading="lazy" />
+        <span class="card-page-badge">P.28</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">資料檢視</span>
+        </div>
+        <h3 class="card-title">查看表單填答與試算表結構</h3>
+        <p class="card-sub">確認資料欄位型態、標題列與資料筆數</p>
+        <p class="card-desc">進入表單連動的 Google 試算表，檢查各欄位名稱（如：時間戳記、電子郵件地址、姓名、身分代碼），確保欄位名稱清晰以便後續 AI 引用。</p>
+        <ul class="key-points-list"><li class="key-point-item">確認試算表分享權限為允許讀取</li><li class="key-point-item">檢查身分欄位代碼（如：1=學生, 2=家長, 3=教師, 4=行政）</li><li class="key-point-item">確認 Email 格式正確無遺漏</li></ul>
+        <div class="card-links-box"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeRmT0FAdyNIt3wGYF7_MwJ9YYApgOb3ctjLD5wZGnUFlB7SA/viewform?usp=header" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 表單填報連結</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_29.png" alt="使用「@」符號精準引用檔案" loading="lazy" />
+        <span class="card-page-badge">P.29</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">檔案引用</span>
+        </div>
+        <h3 class="card-title">使用「@」符號精準引用檔案</h3>
+        <p class="card-sub">在對話框輸入 @ 快速連結雲端試算表</p>
+        <p class="card-desc">在 Codex 對話輸入框中鍵入「@」，即可開啟專案檔案與外部雲端檔案選擇器，快速將目標 Google 試算表掛載進當前對話脈絡中。</p>
+        <ul class="key-points-list"><li class="key-point-item">鍵入「@」啟動上下文快速參照選單</li><li class="key-point-item">支援搜尋專案內檔案與授權之 Google Drive 檔案</li><li class="key-point-item">免去反覆手動複製試算表內容的繁瑣流程</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_30.png" alt="確認檔案掛載狀態與上下文感知" loading="lazy" />
+        <span class="card-page-badge">P.30</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">上下文掛載</span>
+        </div>
+        <h3 class="card-title">確認檔案掛載狀態與上下文感知</h3>
+        <p class="card-sub">確保目標試算表已成功載入 Agent 工作記憶中</p>
+        <p class="card-desc">掛載成功後，對話框會顯示檔案標籤。Codex 將能即時讀取試算表中的最新分頁內容、欄位標題與每一筆紀錄。</p>
+        <ul class="key-points-list"><li class="key-point-item">確認對話框出現試算表圖示與檔名標籤</li><li class="key-point-item">可先請 Codex 快速統計總筆數以確認連線正常</li><li class="key-point-item">隨時可新增多個關聯檔案共同分析</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_31.png" alt="下達多條件篩選與寄信提示詞 (一)" loading="lazy" />
+        <span class="card-page-badge">P.31</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">篩選指令</span>
+        </div>
+        <h3 class="card-title">下達多條件篩選與寄信提示詞 (一)</h3>
+        <p class="card-sub">從試算表中篩選身份 3 或 4 之資料</p>
+        <p class="card-desc">指令範例：「從這個試算表中篩選出身分別為 3 或 4 的資料，並以指定帳號寄發帳號重置通知信件，標題：google ai 帳號重置通知...」。</p>
+        <ul class="key-points-list"><li class="key-point-item">明確指定篩選邏輯：身分別 == 3 或 4</li><li class="key-point-item">指定寄件者身分與信件主旨規範</li><li class="key-point-item">定義動態內容變數，如 (使用者名稱) 老師好</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_32.png" alt="信件內文格式與動態欄位代入 (二)" loading="lazy" />
+        <span class="card-page-badge">P.32</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 實算表與郵件通知</span>
+          <span class="card-type-badge">郵件格式</span>
+        </div>
+        <h3 class="card-title">信件內文格式與動態欄位代入 (二)</h3>
+        <p class="card-sub">個人化郵件模板精準套用</p>
+        <p class="card-desc">詳細設定信件內容模板：「(使用者名稱)老師好，這是您的 google ai 帳號重置資訊...」，讓 AI 自動抓取對應姓名的資料進行個人化填入。</p>
+        <ul class="key-points-list"><li class="key-point-item">動態欄位替換：將每位老師的真實姓名自動代入</li><li class="key-point-item">附帶重置連結、帳號說明與注意事項</li><li class="key-point-item">維持禮貌且一致的公務信函排版風格</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_33.png" alt="預覽發信名單與內容核對 (三)" loading="lazy" />
+        <span class="card-page-badge">P.33</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">發信預覽</span>
+        </div>
+        <h3 class="card-title">預覽發信名單與內容核對 (三)</h3>
+        <p class="card-sub">寄出前的最後安全檢查防線</p>
+        <p class="card-desc">在真正寄發前，可要求 Codex 先列出符合條件的教師名單、收件信箱與信件預覽內容，確認無誤後再執行發送指令。</p>
+        <ul class="key-points-list"><li class="key-point-item">先列表預覽：受影響的收件者共有幾位</li><li class="key-point-item">抽樣檢查信件內文是否正確替換動態變數</li><li class="key-point-item">落實人機協同的安全審核機制</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_34.png" alt="設定 Codex 寄信授權帳號 (一)" loading="lazy" />
+        <span class="card-page-badge">P.34</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">寄件設定</span>
+        </div>
+        <h3 class="card-title">設定 Codex 寄信授權帳號 (一)</h3>
+        <p class="card-sub">在 ChatGPT 網頁版中配置郵件寄發身分</p>
+        <p class="card-desc">說明如何在 ChatGPT 網頁版或 Codex 整合設定中，授權綁定 Google 帳號（如 jam@fyjh.ntpc.edu.tw），確保具備合法的寄信權限。</p>
+        <ul class="key-points-list"><li class="key-point-item">完成 Google Workspace OAuth 授權綁定</li><li class="key-point-item">設定預設發信人名稱與電子郵件地址</li><li class="key-point-item">避免信件被收件端誤判為垃圾信件</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_35.png" alt="寄件連線驗證與授權測試 (二)" loading="lazy" />
+        <span class="card-page-badge">P.35</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">連線測試</span>
+        </div>
+        <h3 class="card-title">寄件連線驗證與授權測試 (二)</h3>
+        <p class="card-sub">測試 Gmail API 連線與權限許可</p>
+        <p class="card-desc">執行一次測試信發送，確認授權 Token 有效、寄件端能正常連線至 Gmail 伺服器，並確認收件匣能順利收到格式正確的測試郵件。</p>
+        <ul class="key-points-list"><li class="key-point-item">發送測試信至自身信箱驗證連線</li><li class="key-point-item">檢查信件主旨、排版與附件是否正常</li><li class="key-point-item">確認發信配額與每日限制</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="4">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_36.png" alt="自動化批次寄信實戰執行 (三)" loading="lazy" />
+        <span class="card-page-badge">P.36</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰一 · 試算表與郵件通知</span>
+          <span class="card-type-badge">批次發送</span>
+        </div>
+        <h3 class="card-title">自動化批次寄信實戰執行 (三)</h3>
+        <p class="card-sub">高效完成數十位教師帳號通知信發送</p>
+        <p class="card-desc">啟動自動發送流程。Codex 依序處理每一位符合條件的名單，完成個人化通知信發送，並於畫面回報發送成功清單與紀錄日誌。</p>
+        <ul class="key-points-list"><li class="key-point-item">自動依序發送個人化郵件</li><li class="key-point-item">即時回報發送成功筆數與失敗名單</li><li class="key-point-item">大幅節省行政同仁數小時的人工逐一發信時間</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_37.png" alt="實戰二 · 建立財產報廢申請單" loading="lazy" />
+        <span class="card-page-badge">P.37</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">報廢實戰</span>
+        </div>
+        <h3 class="card-title">實戰二 · 建立財產報廢申請單</h3>
+        <p class="card-sub">從零碎照片與試算表自動填寫正式報廢公文</p>
+        <p class="card-desc">學校設備損壞要報廢，往往需要找照片、對財產編號、填報廢單，步驟繁瑣。本單元示範如何透過專案資料夾與素材整合，讓 AI 一鍵完成公文套印。</p>
+        <ul class="key-points-list"><li class="key-point-item">整合設備現況照片、財產清冊與報廢申請單範本</li><li class="key-point-item">AI 辨識照片損壞特徵並比對財產編號</li><li class="key-point-item">自動產生格式完美的 Word/Google Doc 報廢申請公文</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_38.png" alt="建立專屬專案資料夾與工作區" loading="lazy" />
+        <span class="card-page-badge">P.38</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">專案建立</span>
+        </div>
+        <h3 class="card-title">建立專屬專案資料夾與工作區</h3>
+        <p class="card-sub">專案 ➔ ＋ ➔ 指定專案名稱與資料夾路徑</p>
+        <p class="card-desc">在 Codex 中點擊「專案 ➔ ＋」，建立獨立的工作專區（例如：財產報廢自動化）。將與此任務相關的檔案集中管理，避免跨任務干擾。</p>
+        <ul class="key-points-list"><li class="key-point-item">為特定行政任務建立專屬工作專區</li><li class="key-point-item">集中管理該任務的輸入素材與輸出產物</li><li class="key-point-item">建立清晰的資料夾層級結構</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_39.png" alt="匯整報廢申請四大核心素材" loading="lazy" />
+        <span class="card-page-badge">P.39</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">素材雲端</span>
+        </div>
+        <h3 class="card-title">匯整報廢申請四大核心素材</h3>
+        <p class="card-sub">申請單範本、範例照片、財產檔案、提示詞</p>
+        <p class="card-desc">橘子老師提供了完整實作素材包：包含財產報廢申請單範本 (DOCX)、範例報廢照片 (Drive)、範例財產清冊檔案 (Sheet) 與完整提示詞檔案。</p>
+        <ul class="key-points-list"><li class="key-point-item">📄 財產報廢申請單範本：標準公文排版</li><li class="key-point-item">📷 範例照片：設備損壞外觀實拍照</li><li class="key-point-item">📊 範例財產清冊：廠牌、購置年份、財產編號</li><li class="key-point-item">💡 提示詞檔案：引導 AI 精準比對與填表的咒語</li></ul>
+        <div class="card-links-box"><a href="https://docs.google.com/document/d/1ycXsCTt2Q-PgNkp6wz-OUnCMr-0ByBpL/edit?usp=drive_link&amp;ouid=114425903125895498189&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 財產報廢申請單範本（Google Doc）</a><a href="https://drive.google.com/file/d/1Ur8aPxQ8N5ccepBKg439qcljlbMBDYyn/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 損壞設備範例照片（Google Drive）</a><a href="https://docs.google.com/spreadsheets/d/1hllWwzfOnPZ3Vbfnm5qgS90Vd1uTIc2g/edit?usp=drive_link&amp;ouid=114425903125895498189&amp;rtpof=true&amp;sd=true" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 範例財產清冊檔案（Google Sheet）</a><a href="https://drive.google.com/file/d/1G253bCwUvQN80D7Y_bRCZiGyOTZSr8XW/view?usp=drive_link" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 報廢實戰提示詞檔案（Google Drive）</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_40.png" alt="將報廢流程固化為全域 SKILL" loading="lazy" />
+        <span class="card-page-badge">P.40</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">固化Skill</span>
+        </div>
+        <h3 class="card-title">將報廢流程固化為全域 SKILL</h3>
+        <p class="card-sub">「很好，將這個工作流程建立全域SKILL」</p>
+        <p class="card-desc">當測試成功後，直接下達指令：「很好，將這個工作流程建立全域SKILL」。Codex 會自動將上述比對、填表、產出公文的步驟封裝為永久可用的全域技能！</p>
+        <ul class="key-points-list"><li class="key-point-item">一句話將成功經驗封裝為 Skill 模組</li><li class="key-point-item">自動生成 SKILL.md、定義觸發詞與執行流程</li><li class="key-point-item">未來只要有報廢需求，直接呼叫 Skill 即可一鍵處理</li></ul>
+        <div class="card-links-box"><a href="https://docs.google.com/document/d/1ycXsCTt2Q-PgNkp6wz-OUnCMr-0ByBpL/edit" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 財產報廢單範本</a><a href="https://drive.google.com/file/d/1G253bCwUvQN80D7Y_bRCZiGyOTZSr8XW/view" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 提示詞下載</a></div>
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_41.png" alt="實戰三 · AI 自動課前複習題生成" loading="lazy" />
+        <span class="card-page-badge">P.41</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">出題實戰</span>
+        </div>
+        <h3 class="card-title">實戰三 · AI 自動課前複習題生成</h3>
+        <p class="card-sub">教學自動化神技：結合課堂紀錄、課本與自動出題</p>
+        <p class="card-desc">進入第三大實戰場景：結合雲端「教師課堂紀錄系統」試算表與教科書內容，由 AI 自動找出班級最近上課進度，生成 5 題複習題與 5 題延伸素養題。</p>
+        <ul class="key-points-list"><li class="key-point-item">自動讀取各班最近一次課堂教學進度</li><li class="key-point-item">比對教材資料庫生成 5 題核心複習題</li><li class="key-point-item">延伸設計 5 題進階應用素養題</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_42.png" alt="設計課前複習題生成全域 SKILL (一)" loading="lazy" />
+        <span class="card-page-badge">P.42</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">Skill設計</span>
+        </div>
+        <h3 class="card-title">設計課前複習題生成全域 SKILL (一)</h3>
+        <p class="card-sub">「幫我把以下提示詞轉成正確的SKILL格式」</p>
+        <p class="card-desc">建立「課前複習題生成全域SKILL」的核心提示詞第一部分：指定讀取 Google Drive「教師課堂紀錄系統」試算表，列出班級與科目資料。</p>
+        <ul class="key-points-list"><li class="key-point-item">步驟 1：讀取指定 Google 帳號雲端硬碟的試算表</li><li class="key-point-item">步驟 2：解析各班級與科目資料清單</li><li class="key-point-item">步驟 3：定位最近一次課程記錄內容</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_43.png" alt="複習題生成與雲端文件自動歸檔 (二)" loading="lazy" />
+        <span class="card-page-badge">P.43</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">自動歸檔</span>
+        </div>
+        <h3 class="card-title">複習題生成與雲端文件自動歸檔 (二)</h3>
+        <p class="card-sub">生成 5 題複習 + 5 題延伸，自動建立日期資料夾並寄信</p>
+        <p class="card-desc">生成題目後自動以 Google 文件儲存在「複習題資料夾」中的當日日期資料夾中（若無則自動建立），並以 Gmail 程式自動寄送給任課教師，全程無須確認！</p>
+        <ul class="key-points-list"><li class="key-point-item">5 題進度複習題 + 5 題進階延伸思考題</li><li class="key-point-item">自動在雲端硬碟建立當日日期資料夾並存成 Google Doc</li><li class="key-point-item">以 Gmail 自動寄達教師信箱，信件直接寄出無須二次手動確認</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_44.png" alt="雲端排程設定 · 釋放雙手的終極境界" loading="lazy" />
+        <span class="card-page-badge">P.44</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">雲端排程</span>
+        </div>
+        <h3 class="card-title">雲端排程設定 · 釋放雙手的終極境界</h3>
+        <p class="card-sub">每週日早上 9:00 自動觸發出題，執行到學期末</p>
+        <p class="card-desc">透過雲端排程指令：「雲端排程，每週重複，每週日上午9:00 /pre-class..... 生成課前複習題，執行到2027-01-17 為止」。完全不必人工介入！</p>
+        <ul class="key-points-list"><li class="key-point-item">設定定期觸發時間：每週日上午 9:00</li><li class="key-point-item">自動呼叫 /pre-class 技能執行完整出題與寄信工作流</li><li class="key-point-item">指定任務截止日期：自動運行至學期末（2027-01-17）</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_45.png" alt="雲端排程排定語法結構解析" loading="lazy" />
+        <span class="card-page-badge">P.45</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">排程語法</span>
+        </div>
+        <h3 class="card-title">雲端排程排定語法結構解析</h3>
+        <p class="card-sub">自然語言排程指令與週期參數規範</p>
+        <p class="card-desc">深入剖析排程指令：「每週重複，每週日上午9:00 /pre-class..... 生成課前複習題，執行到2027-01-17 為止」。展示自然語言如何精確轉換為系統 Cron 定時任務。</p>
+        <ul class="key-points-list"><li class="key-point-item">頻率定義：每週重複 (Weekly recurrence)</li><li class="key-point-item">時間觸發點：每週日 09:00 AM</li><li class="key-point-item">執行內容：調用指定 Skill 與自動參數傳遞</li><li class="key-point-item">終止條件：有效日期邊界保護</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_46.png" alt="排程狀態檢查與日誌監控" loading="lazy" />
+        <span class="card-page-badge">P.46</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">排程監控</span>
+        </div>
+        <h3 class="card-title">排程狀態檢查與日誌監控</h3>
+        <p class="card-sub">確認排程已被系統排定並處於活動中狀態</p>
+        <p class="card-desc">檢視排程管理器（Schedule Manager），確認任務已處於待命（Scheduled/Active）狀態，並能查閱歷史執行日誌與成功回報狀態。</p>
+        <ul class="key-points-list"><li class="key-point-item">查閱排程列表中的定時任務名稱與下次執行時間</li><li class="key-point-item">確認環境變數與 API 權限在排程觸發時保持有效</li><li class="key-point-item">建立異常通知機制，若出題失敗即時提醒</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_47.png" alt="ChatGPT 網頁版中的排程操作介面 (一)" loading="lazy" />
+        <span class="card-page-badge">P.47</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">網頁排程</span>
+        </div>
+        <h3 class="card-title">ChatGPT 網頁版中的排程操作介面 (一)</h3>
+        <p class="card-sub">透過網頁圖形化介面輕鬆管理定時任務</p>
+        <p class="card-desc">示範在 ChatGPT 網頁版中直接查看與編輯雲端排程的步驟，即便不懂 Cron 語法的非技術教師也能直覺開啟或暫停排程。</p>
+        <ul class="key-points-list"><li class="key-point-item">在網頁端直觀檢視每週預約任務</li><li class="key-point-item">支援一鍵暫停、修改執行時間或刪除排程</li><li class="key-point-item">降低教師使用自動化技術的門檻</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_48.png" alt="ChatGPT 網頁版排程細節設定 (二)" loading="lazy" />
+        <span class="card-page-badge">P.48</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">排程設定</span>
+        </div>
+        <h3 class="card-title">ChatGPT 網頁版排程細節設定 (二)</h3>
+        <p class="card-sub">調整通知對象、附檔規則與重試機制</p>
+        <p class="card-desc">進一步微調排程細節：包含信件主旨動態日期標註、附件轉存格式（Google Doc / PDF），以及網路不穩定時的自動重試策略。</p>
+        <ul class="key-points-list"><li class="key-point-item">設定動態檔名格式，如【課前複習題_YYYYMMDD】</li><li class="key-point-item">自動轉換輸出文件格式以符合教學需求</li><li class="key-point-item">穩健的重試與錯誤容忍機制</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_49.png" alt="排程執行成果驗證與自動歸檔 (三)" loading="lazy" />
+        <span class="card-page-badge">P.49</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">成果驗證</span>
+        </div>
+        <h3 class="card-title">排程執行成果驗證與自動歸檔 (三)</h3>
+        <p class="card-sub">時間一到，教師信箱準時收到客製題目公文</p>
+        <p class="card-desc">驗證成果：每週日上午 9:00，系統無聲無息地完成課程紀錄讀取、生成 10 題複習與延伸題、建立 Google Doc 並寄達教師 Gmail。教師週一上班即可直接使用！</p>
+        <ul class="key-points-list"><li class="key-point-item">零人工介入，自動完成全套課前備課工作</li><li class="key-point-item">雲端資料夾井然有序地按日期歸檔各週題目</li><li class="key-point-item">教師享有充裕的時間進行課堂互動設計</li></ul>
+        
+      </div>
+    </article>
+    
+    <article class="slide-card" data-card-unit="5">
+      <div class="card-media-box">
+        <img class="card-img" src="assets/slides/slide_50.png" alt="結語 · 打造專屬的 AI Agent 教師團隊" loading="lazy" />
+        <span class="card-page-badge">P.50</span>
+        <span class="card-zoom-hint">🔍 點擊放大</span>
+      </div>
+      <div class="card-body">
+        <div class="card-header-line">
+          <span class="card-unit-badge">實戰二與三 · 報廢申請與自動排程出題</span>
+          <span class="card-type-badge">研習結語</span>
+        </div>
+        <h3 class="card-title">結語 · 打造專屬的 AI Agent 教師團隊</h3>
+        <p class="card-sub">邁向自主學習與行政賦能的未來教育新典範</p>
+        <p class="card-desc">透過今天的研習，我們完整掌握了 Codex、Context Engineering、自訂 SKILL 與雲端排程。讓 AI Agent 成為你最忠實可靠的行政與教學小幫手，每天開心玩 AI！</p>
+        <ul class="key-points-list"><li class="key-point-item">從學會提示詞 ➔ 到構建專屬 Agent 團隊</li><li class="key-point-item">將例行瑣事全面自動化，專注於教育的溫度與陪伴</li><li class="key-point-item">持續在「每天開心玩Ai」共學群中交流精進！</li></ul>
+        <div class="card-links-box"><a href="https://www.facebook.com/ju.laoshi" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 橘子老師 FB 專頁</a><a href="https://www.facebook.com/profile.php?id=61580433065847" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 橘子老師教室粉專</a><a href="https://line.me/ti/g2/WcNwA_0Zf-ciDHCVodeEpFFBLd0PmGwKlhRprg?utm_source=invitation&amp;utm_medium=link_copy&amp;utm_campaign=default" target="_blank" rel="noopener noreferrer" class="card-link-btn">🔗 每天開心玩Ai 社群（密碼 happyai）</a></div>
+      </div>
+    </article>
+    
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 燈箱大圖預覽 (Lightbox Modal) -->
+  <div id="lightboxModal">
+    <div class="lightbox-content">
+      <button id="lightboxCloseBtn" class="lightbox-close-btn" title="關閉 (Esc)">✕</button>
+      <img id="lightboxImg" class="lightbox-img" src="" alt="Zoom Slide" />
+      <p id="lightboxCaption" class="lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- 頁腳 (Footer) -->
+  <footer class="app-footer">
+    <div class="footer-links">
+      <a href="https://www.facebook.com/ju.laoshi" target="_blank" rel="noopener noreferrer">🍊 橘子老師 FB 專頁</a>
+      <a href="https://www.facebook.com/profile.php?id=61580433065847" target="_blank" rel="noopener noreferrer">📚 橘子老師教室粉專</a>
+      <a href="https://line.me/ti/g2/WcNwA_0Zf-ciDHCVodeEpFFBLd0PmGwKlhRprg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer">💬 每天開心玩Ai 社群 (密碼: happyai)</a>
+      <a href="https://openai.com/zh-Hant/codex/" target="_blank" rel="noopener noreferrer">🤖 OpenAI Codex 官方</a>
+    </div>
+    <p>AI Agent 時代來臨 · Codex 打造超級小幫手 研習簡報成果展示系統 · 支援響應式 RWD、白板畫筆、無障礙縮放與 GitHub Pages</p>
+  </footer>
+
+  <!-- 注入投影片資料 -->
+  <script>
+    window.SLIDES_DATA = [{"page": 1, "image": "assets/slides/slide_01.png", "title": "AI Agent 時代來臨 · Codex 打造超級小幫手", "subtitle": "橘子老師 2026 最新 AI Agent 實戰研習簡報", "unit": 1, "unit_name": "講師介紹與社群前言", "badge": "首頁封面", "desc": "本研習聚焦於 OpenAI Codex 打造教育與行政超級小幫手。從 Prompt Engineering 走向 Context Engineering 與 Loop Engineering，透過自訂 SKILL、工作流程自動化與排程，讓 AI Agent 真正成為教師的日常生產力夥伴。", "key_points": ["AI Agent 時代全面降臨：從單純對話走向自動化任務代理", "Codex 打造超級小幫手：專案知識管理與自訂 Skill", "教育行政與課堂實務三大落地場景完整解析"], "links": [{"label": "簡報縮址", "url": "https://reurl.cc/1lp4K8"}, {"label": "橘子老師個人 FB", "url": "https://www.facebook.com/ju.laoshi"}], "raw_texts": ["Codex打造超級小幫手", "AI Agent時代來臨", "https://reurl.cc/1lp4K8", "橘子老師", "https://www.facebook.com/ju.laoshi", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 2, "image": "assets/slides/slide_02.png", "title": "講師個人專頁 · 橘子老師", "subtitle": "專注於 AI 教育創新、自動化工作流與 Agent 實務研發", "unit": 1, "unit_name": "講師介紹與社群前言", "badge": "講師專頁", "desc": "橘子老師個人 Facebook 專頁連結，定期分享第一線 AI 教育創新、提示詞心法與跨工具串接實務，歡迎各校教育夥伴交流互動。", "key_points": ["長期深耕教育科技與中小學 AI 落地應用", "研發 Google Gemini, OpenAI Codex, NotebookLM 實戰工作流", "推廣「每天開心玩 Ai」教育共學圈"], "links": [{"label": "Facebook：橘子老師", "url": "https://www.facebook.com/ju.laoshi"}], "raw_texts": ["Codex打造超級小幫手", "AI Agent時代來臨", "https://reurl.cc/1lp4K8", "橘子老師", "https://www.facebook.com/ju.laoshi", "橘子老師教室", "https://www.facebook.com/profile.php?id=61580433065847", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 3, "image": "assets/slides/slide_03.png", "title": "橘子老師教室 · 官方粉絲專頁", "subtitle": "教學資源、提示詞包、研習教材第一手發布平台", "unit": 1, "unit_name": "講師介紹與社群前言", "badge": "官方粉專", "desc": "「橘子老師教室」粉絲專頁集結了大量開源提示詞、自動化教材與教師研習精華，是教師學習 AI 工具與數位轉型的最佳起點。", "key_points": ["提供完整研習講義與提示詞開源包", "中小學教案實例與行政自動化模板分享", "持續追蹤最新生成式 AI 技術於教學現場的應用"], "links": [{"label": "FB 粉專：橘子老師教室", "url": "https://www.facebook.com/profile.php?id=61580433065847"}], "raw_texts": ["橘子老師", "https://www.facebook.com/ju.laoshi", "橘子老師教室", "https://www.facebook.com/profile.php?id=61580433065847", "加入「每天開心玩Ai」", "今日密碼:", "happyai", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 4, "image": "assets/slides/slide_04.png", "title": "加入「每天開心玩Ai」教師共學群", "subtitle": "社群專屬通關密碼：happyai", "unit": 1, "unit_name": "講師介紹與社群前言", "badge": "LINE 社群", "desc": "加入 LINE 社群「每天開心玩Ai」，掌握研習即時互動、檔案下載密鑰與課後諮詢。入群驗證問題請填寫今日通關密碼：happyai。", "key_points": ["LINE 社群專屬入群密碼：happyai", "數千位熱血教育工作者共學交流平台", "每日分享最新 AI 工具與免費教學資源"], "links": [{"label": "加入 LINE 社群（通關密碼: happyai）", "url": "https://line.me/ti/g2/WcNwA_0Zf-ciDHCVodeEpFFBLd0PmGwKlhRprg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"}], "raw_texts": ["橘子老師教室", "https://www.facebook.com/profile.php?id=61580433065847", "今日密碼:", "happyai", "加入「每天開心玩Ai」", "Codex", "AI Agent", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 5, "image": "assets/slides/slide_05.png", "title": "邁向 AI Agent 時代 · 研習架構總覽", "subtitle": "從工具使用者蛻變為 AI Agent 架構師", "unit": 1, "unit_name": "講師介紹與社群前言", "badge": "架構總覽", "desc": "今日研習核心目標：帶領老師們認識 OpenAI Codex 核心功能、掌握三階段工程演進、建立專屬工作區規範，並親手實作試算表通知信、財產報廢單與雲端自動排程出題 Skill。", "key_points": ["認識 Codex 執行環境與指令互動模式", "理解 Prompt -> Context -> Loop 三階段工程思維", "三大實戰：試算表郵件、報廢表單、排程出題"], "links": [], "raw_texts": ["Page 4 of 50.", "加入「每天開心玩Ai」", "今日密碼:", "happyai", "Codex", "AI Agent", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 6, "image": "assets/slides/slide_06.png", "title": "什麼是 Codex？認識下一代 AI Agent", "subtitle": "兼具代碼理解、終端機操作與工作流自動化的智能核心", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "概念解析", "desc": "OpenAI Codex 不只是文字生成模型，它能真正理解軟體專案結構、執行環境指令、呼叫外部工具與操作檔案系統，是邁向自主 Agent 的關鍵基石。", "key_points": ["超越傳統 Chatbot：具備檔案讀寫與指令執行權限", "專案級上下文感知：掌握整個工作區檔案結構", "支援工具外掛（Tools/Plugins/MCP）與自訂技能"], "links": [], "raw_texts": ["Page 5 of 50.", "Codex", "AI Agent", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 7, "image": "assets/slides/slide_07.png", "title": "Codex 官方入口與註冊指引", "subtitle": "前往官方網站探索 Codex 專案介面", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "官方入口", "desc": "登入 OpenAI Codex 官方專案頁面（openai.com/zh-Hant/codex/），探索專案儀表板、工作區管理與開發者工具支援。", "key_points": ["訪問官方網址：openai.com/zh-Hant/codex/", "建立個人或團隊工作區環境", "檢查帳號權限與模型支援清單"], "links": [{"label": "OpenAI Codex 官方網址", "url": "https://openai.com/zh-Hant/codex/"}], "raw_texts": ["Page 6 of 50.", "Codex", "AI Agent", "https://openai.com/zh-Hant/codex/", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 8, "image": "assets/slides/slide_08.png", "title": "環境建立與專案介面導覽", "subtitle": "熟悉 Codex 專案設定與主視窗佈局", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "介面導覽", "desc": "介紹 Codex 工作視窗三大核心區域：左側專案檔案樹、中央對話與執行終端、右側上下文與檢查面板，並示範基本互動流程。", "key_points": ["掌握左側檔案導航與目錄組織", "終端機對話互動面板與即時反饋", "專案工作目錄與全域設定同步"], "links": [{"label": "Codex 官網", "url": "https://openai.com/zh-Hant/codex/"}], "raw_texts": ["Page 7 of 50.", "Codex", "AI Agent", "https://openai.com/zh-Hant/codex/", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 9, "image": "assets/slides/slide_09.png", "title": "外掛工具安裝 · 擴充 Agent 超能力", "subtitle": "把需要用到的外掛工具與技能全部裝上去", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "外掛安裝", "desc": "工欲善其事，必先利其器！在 Codex 中安裝必要的工具外掛（MCP 工具、Google Workspace 串接、自動化套件），讓 Agent 具備操作外部應用的能力。", "key_points": ["外掛市集與自訂工具串接支援", "安裝 Google Drive, Gmail, Sheets 等生產力外掛", "賦予 Agent 讀取試算表與發送信件的實際行動力"], "links": [], "raw_texts": ["Page 8 of 50.", "Codex", "AI Agent", "https://openai.com/zh-Hant/codex/", "把需要用到的外掛工具都裝上去", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 10, "image": "assets/slides/slide_10.png", "title": "權限設定與安全防護機制", "subtitle": "明確界定 Agent 的讀取、寫入與指令執行邊界", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "安全權限", "desc": "在賦予 Agent 自動化權限的同時，需妥善配置安全性策略。確認哪些操作允許自動執行、哪些高敏感動作（如刪除、郵件發送）需經過確認或安全隔離。", "key_points": ["設定檔案讀取與寫入目錄權限", "網路存取與外部 API 授權管控", "平衡自動化執行效率與資料隱私安全"], "links": [], "raw_texts": ["Page 9 of 50.", "Codex", "AI Agent", "把需要用到的外掛工具都裝上去", "權限設定", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 11, "image": "assets/slides/slide_11.png", "title": "快捷斜線指令與任務控制", "subtitle": "輸入「/」開啟指令選單，掌控 Agent 生命週期", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "指令操作", "desc": "在輸入框輸入「/」即可叫出快捷指令面板。包含任務終止（/kill）、技能調用（/skill）、模型切換等快速功能，提升操控效率。", "key_points": ["輸入「/」：快速觸發內建指令與自訂技能", "終止失控或耗時任務：及時使用終止指令", "快速查閱當前工作階段可用之能力選單"], "links": [], "raw_texts": ["Page 10 of 50.", "Codex", "AI Agent", "把需要用到的外掛工具都裝上去", "權限設定", "S", "KILL", "輸入:", "/", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 12, "image": "assets/slides/slide_12.png", "title": "技能調用與底層模型切換", "subtitle": "靈活選用最強推論模型與特定專屬 SKILL", "unit": 2, "unit_name": "Codex 基礎與指令工具", "badge": "模型切換", "desc": "依照任務難度與預算考量，隨時透過指令或介面選單切換適合的語言模型，並能指定特定 SKILL 進行高精度專業作業。", "key_points": ["輸入「/」選取目標 SKILL 模組", "根據任務複雜度選配最佳推論模型", "兼顧執行速度、成本與推理精確度"], "links": [], "raw_texts": ["Page 11 of 50.", "Codex", "AI Agent", "權限設定", "S", "KILL", "輸入:", "/", "SKILL", "輸入: /", "選擇模型", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 13, "image": "assets/slides/slide_13.png", "title": "三大工程進化：AI 應用的思維躍遷", "subtitle": "Prompt Engineering ➔ Context Engineering ➔ Loop Engineering", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "工程演進", "desc": "AI 開發已歷經三代變革：從第一代單向「提示詞工程（Prompt）」、第二代圍繞專案記憶的「脈絡工程（Context）」，邁向第三代具備自主反饋閉環的「迴圈工程（Loop）」。", "key_points": ["第一階段 Prompt Engineering：單次對話、依賴精美提示詞", "第二階段 Context Engineering：以檔案/記憶/架構為核心", "第三階段 Loop Engineering：具備自我修正與自動反饋閉環"], "links": [], "raw_texts": ["Page 12 of 50.", "Codex", "AI Agent", "S", "KILL", "輸入:", "/", "選擇模型", "第一階段：Prompt Engineering", "第二階段：Context Engineering", "第三階段：Loop Engineering", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 14, "image": "assets/slides/slide_14.png", "title": "Codex 核心檔案體系與標準", "subtitle": "專案特別關注之骨幹：AGENTS.md、.agents/skills/、SKILL.md", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "核心檔案", "desc": "在專案中，Codex 特別依循的核心檔案規範包含：規範工作方式的 AGENTS.md、存放技能的 .agents/skills/，以及給人類維護的 README.md、GOALS.md 等實用指引。", "key_points": ["AGENTS.md：Agent 的最高憲法與行為準則", ".agents/skills/SKILL.md：模組化技能的定義與操作手冊", "README.md：專為「人類開發者」撰寫的專案說明書"], "links": [], "raw_texts": ["Page 13 of 50.", "Codex", "AI Agent", "選擇模型", "第一階段：Prompt Engineering", "第二階段：Context Engineering", "第三階段：Loop Engineering", "其中真正屬於 Codex 特別關注的，是：", "AGENTS.md", ".agents/skills/", "SKILL.md", "而 README.md、GOALS.md、PLANS.md、PROMPTS.md、harness/ 等，比較屬於很實用的", "README.md 給「人」看的專案說明書。", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 15, "image": "assets/slides/slide_15.png", "title": "四大多維文件：專案知識四角柱", "subtitle": "README.md、GOALS.md、PLANS.md、PROMPTS.md", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "知識文件", "desc": "四大多維文件構建了專案的完整脈絡：README（專案說明書）、GOALS（我們到底要做出什麼？）、PLANS（我要怎麼走？）、PROMPTS（專案常用的任務指令庫）。", "key_points": ["README.md：給「人」看的專案說明書", "GOALS.md：定義最終成果與產出規格", "PLANS.md：規劃分階段執行里程碑與路徑", "PROMPTS.md：保存專案專用的高效指令庫"], "links": [], "raw_texts": ["Page 14 of 50.", "Codex", "AI Agent", "第一階段：Prompt Engineering", "第二階段：Context Engineering", "第三階段：Loop Engineering", "其中真正屬於 Codex 特別關注的，是：", "AGENTS.md", ".agents/skills/", "SKILL.md", "而 README.md、GOALS.md、PLANS.md、PROMPTS.md、harness/ 等，比較屬於很實用的", "README.md 給「人」看的專案說明書。", "README.md 給 「人」看的專案說明書。", "GOALS.md", "「我們到底要做出什麼？」", "PLANS.md", "我要怎麼走？", "PROMPTS.md", "「這個專案常用的 Agent 任務指令庫」", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 16, "image": "assets/slides/slide_16.png", "title": "專案知識盤點與 Agent 記憶整理", "subtitle": "將目前工作區脈絡固化，實現永續開發與跨代理接力", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "記憶固化", "desc": "示範標準提示詞：要求 Codex 對目前專案進行「完整知識盤點與記憶整理」。讀取實際程式、設定、既有 Skills，將成果整理保存，以便下次快速接軌。", "key_points": ["避免記憶遺忘：將隱性經驗沉澱為顯性文件", "盤點實際程式碼、外部配置與工作流程", "讓未來的任何 Agent 能在數秒內無縫接手專案"], "links": [], "raw_texts": ["Page 15 of 50.", "Codex", "AI Agent", "其中真正屬於 Codex 特別關注的，是：", "AGENTS.md", ".agents/skills/", "SKILL.md", "而 README.md、GOALS.md、PLANS.md、PROMPTS.md、harness/ 等，比較屬於很實用的", "README.md 給「人」看的專案說明書。", "README.md 給 「人」看的專案說明書。", "GOALS.md", "「我們到底要做出什麼？」", "PLANS.md", "我要怎麼走？", "PROMPTS.md", "「這個專案常用的 Agent 任務指令庫」", "GOALS.md 「我們到底要做出什麼？」", "PLANS.md 我要怎麼走？", "PROMPTS.md 「這個專案常用的 Agent 任務指令庫」", "請對目前這個 Codex 專案進行一次「完整專案知識盤點與 Agent 記憶整理」。", "你的目標不是單純建立幾個空白", "文件，而是要「讀取目前專案的實際程式、設定、文件、工作流程、既有 Skills 與開發脈絡」，將這個專案目前已經形成的知識完整整理並保存，使未來重新開啟本專案時，另一個 Codex Agent 可以快速理解專案並延續開發。", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 17, "image": "assets/slides/slide_17.png", "title": "知識整理標準提示詞詳解 (一)", "subtitle": "目標導向的知識盤點指令架構", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "提示詞範本", "desc": "拆解知識整理指令的前半段：要求 Agent 不是單純建立空白文件，而是深入分析專案中的各個模組，提取核心功能、依賴關係與資料流程。", "key_points": ["嚴禁生成空白樣板，要求基於專案現況真實提取", "分析系統模組與依賴關係", "規範盤點深度與輸出格式"], "links": [], "raw_texts": ["Page 16 of 50.", "Codex", "AI Agent", "README.md 給 「人」看的專案說明書。", "GOALS.md", "「我們到底要做出什麼？」", "PLANS.md", "我要怎麼走？", "PROMPTS.md", "「這個專案常用的 Agent 任務指令庫」", "請對目前這個 Codex 專案進行一次「完整專案知識盤點與 Agent 記憶整理」。", "你的目標不是單純建立幾個空白", "文件，而是要「讀取目前專案的實際程式、設定、文件、工作流程、既有 Skills 與開發脈絡」，將這個專案目前已經形成的知識完整整理並保存，使未來重新開啟本專案時，另一個 Codex Agent 可以快速理解專案並延續開發。", "你的目標不是單純建立幾個空白文件，而是要「讀取目前專案的實際程式、設定、文件、工作流程、既有 Skills 與開發脈絡」，將這個專案目前已經形成的知識完整整理並保存，使未來重新開啟本專案時，另一個 Codex Agent 可以快速理解專案並延續開發。", "建立：", "AGENTS.md", "如果", "目前已經存在 AGENTS.md，不要直接覆蓋。", "請先讀取原內容，再將目前專案中已經確認的規則、架構與開發知識整合進去。", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 18, "image": "assets/slides/slide_18.png", "title": "知識整理標準提示詞詳解 (二)", "subtitle": "建立跨階段延續性與知識防坍塌技術", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "提示詞範本", "desc": "拆解知識整理指令的後半段：聚焦於如何保存開發脈絡與架構決策，確保無論專案經歷多少輪對話，核心邏輯與工程規範永不偏離。", "key_points": ["記錄關鍵架構決策與設計原則", "沉澱常見踩坑紀錄與最佳解決路徑", "確保多輪迭代後系統結構依然穩健防坍塌"], "links": [], "raw_texts": ["Page 17 of 50.", "Codex", "AI Agent", "請對目前這個 Codex 專案進行一次「完整專案知識盤點與 Agent 記憶整理」。", "你的目標不是單純建立幾個空白", "文件，而是要「讀取目前專案的實際程式、設定、文件、工作流程、既有 Skills 與開發脈絡」，將這個專案目前已經形成的知識完整整理並保存，使未來重新開啟本專案時，另一個 Codex Agent 可以快速理解專案並延續開發。", "建立：", "AGENTS.md", "如果", "目前已經存在 AGENTS.md，不要直接覆蓋。", "請先讀取原內容，再將目前專案中已經確認的規則、架構與開發知識整合進去。", "如果目前已經存在 AGENTS.md，不要直接覆蓋。", "檢查：", ".agents/skills/", "目前不存在，建立它。", "請分析目前專案有哪些「可以被重複執行、具有明確流程、需要特定知識或工具」的工作，判斷哪些適合抽象成 Skill。", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 19, "image": "assets/slides/slide_19.png", "title": "建立與維護 AGENTS.md 準則", "subtitle": "若已存在請整合更新，切勿無情直接覆蓋", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "行為準則", "desc": "AGENTS.md 是專案的靈魂。如果已存在，應先讀取原內容，將新確認的規則、架構與開發知識增量整合進去，保持規則的演進與連貫性。", "key_points": ["AGENTS.md 載明 Agent 的工作職責與編碼慣例", "更新原則：讀取既有內容 ➔ 增量擴充 ➔ 避免粗暴覆蓋", "記錄使用者偏好與專案特定約束條件"], "links": [], "raw_texts": ["Page 18 of 50.", "Codex", "AI Agent", "建立：", "AGENTS.md", "如果", "目前已經存在 AGENTS.md，不要直接覆蓋。", "請先讀取原內容，再將目前專案中已經確認的規則、架構與開發知識整合進去。", "檢查：", ".agents/skills/", "目前不存在，建立它。", "請分析目前專案有哪些「可以被重複執行、具有明確流程、需要特定知識或工具」的工作，判斷哪些適合抽象成 Skill。", "如果目前不存在，建立它。", "每個 Skill 必須建立：", ".agents/skills/<s", "kill-name>/SKILL.md", "SKILL.md 必須包含：", "Frontmatter", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 20, "image": "assets/slides/slide_20.png", "title": "檢查與規劃 .agents/skills/ 技能庫", "subtitle": "識別具備重複執行、固定流程的工作並抽象成 Skill", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "技能規劃", "desc": "分析專案中哪些任務適合封裝成 Skill：具備明確 SOP、需要呼叫特定 API、或每次重複輸入繁瑣提示詞的操作，都是 Skill 的最佳候選。", "key_points": ["檢查 .agents/skills/ 目錄結構，若無則自動建立", "找出「重複出現、流程固定、需要專門知識」的任務", "將零散的操作經驗封裝為可隨時調用的標準模組"], "links": [], "raw_texts": ["Page 19 of 50.", "Codex", "AI Agent", "檢查：", ".agents/skills/", "如果", "目前不存在，建立它。", "請分析目前專案有哪些「可以被重複執行、具有明確流程、需要特定知識或工具」的工作，判斷哪些適合抽象成 Skill。", "每個 Skill 必須建立：", ".agents/skills/<s", "kill-name>/SKILL.md", "SKILL.md 必須包含：", "Frontmatter", ".agents/skills/<skill-name>/SKILL.md", "Skill 資料夾應採用以下結構", "如果某", "個 Skill 需要額外資源，請建立：", "kill-name>/", "│", "├── SKILL.md", "SKILL.md: 「告訴 Agent 怎麼做」", "├── scripts/", "scripts/:「真正執行工作的工具」", "├── references/", "Agent 工作時可以查閱的知識", "└── assets/", "Skill 執行時需要使用的素材", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 21, "image": "assets/slides/slide_21.png", "title": "SKILL.md 標準結構：Frontmatter 規範", "subtitle": "每個 Skill 資料夾的必備靈魂核心", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "Skill規格", "desc": "每個 Skill 必須包含 Frontmatter（name, description）與完整的 Markdown 操作指引，詳細說明觸發條件、輸入參數與預期輸出格式。", "key_points": ["Frontmatter 包含清晰的 name 與用途 description", "定義詳細的執行步驟 SOP 與防錯檢核清單", "規範輸入規格與產出成果的驗證標準"], "links": [], "raw_texts": ["Page 20 of 50.", "Codex", "AI Agent", "每個 Skill 必須建立：", ".agents/skills/<s", "kill-name>/SKILL.md", "SKILL.md 必須包含：", "Frontmatter", "Skill 資料夾應採用以下結構", "如果某", "個 Skill 需要額外資源，請建立：", "kill-name>/", "│", "├── SKILL.md", "SKILL.md: 「告訴 Agent 怎麼做」", "├── scripts/", "scripts/:「真正執行工作的工具」", "├── references/", "Agent 工作時可以查閱的知識", "└── assets/", "Skill 執行時需要使用的素材", "如果某個 Skill 需要額外資源，請建立：", ".agents/skills/<skill-name>/", "其中", "：", "SKILL.md", "= Agent 的操作說明", "scripts/", "= 可以實際執行的工具", "references/", "= Agent 執行任務時需要查閱的知識", "assets/", "= 範本、圖片、JSON、設定檔或其他必要素材", "不要把所有內容全部塞進 SKILL.md。", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 22, "image": "assets/slides/slide_22.png", "title": "Skill 資料夾標準三位一體架構", "subtitle": "SKILL.md + scripts/ + references/", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "資料夾結構", "desc": "標準 Skill 資料夾架構：根目錄 SKILL.md（操作手冊）、scripts/（可執行的腳本工具）、references/（查閱之參考知識庫或範本）。", "key_points": [".agents/skills/<skill-name>/ 根目錄存放 SKILL.md", "scripts/ 目錄存放 Python/Shell 自動化執行腳本", "references/ 目錄存放規格手冊、資料結構與範本檔"], "links": [], "raw_texts": ["Page 21 of 50.", "Codex", "AI Agent", "Skill 資料夾應採用以下結構", "如果某", "個 Skill 需要額外資源，請建立：", ".agents/skills/<s", "kill-name>/", "│", "├── SKILL.md", "SKILL.md: 「告訴 Agent 怎麼做」", "├── scripts/", "scripts/:「真正執行工作的工具」", "├── references/", "Agent 工作時可以查閱的知識", "└── assets/", "Skill 執行時需要使用的素材", "其中", "：", "SKILL.md", "= Agent 的操作說明", "scripts/", "= 可以實際執行的工具", "references/", "= Agent 執行任務時需要查閱的知識", "assets/", "= 範本、圖片、JSON、設定檔或其他必要素材", "不要把所有內容全部塞進 SKILL.md。", "其中：", "SKILL.md = Agent 的操作說明", "scripts/ = 可以實際執行的工具", "references/ = Agent 執行任務時需要查閱的知識", "assets/ = 範本、圖片、JSON、設定檔或其他必要素材", "如果是你自己", "的 Codex 專案，我會分成這 5 層", "🧠", "Agent 規則", "AGENTS.md", "告訴", "Codex「怎麼工作」", "🧩", "Agent 能力", ".agents/skills/", "告訴 Codex「有哪些專業技能」", "📚", "Agent 知識", "告訴 Codex「需要知道什麼」", "⚙️", "Agent 工具", "告訴 Codex「可以執行什麼」", "💻", "實際產品", "src/", "真正的應用程式", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 23, "image": "assets/slides/slide_23.png", "title": "三位一體職責分工深度解析", "subtitle": "操作說明、執行工具、查閱知識的完美結合", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "架構解析", "desc": "SKILL.md 是 Agent 的大腦操作指引；scripts 是 Agent 的雙手（能被呼叫執行的工具）；references 是 Agent 的百科全書（查閱的背景脈絡）。", "key_points": ["SKILL.md = Agent 的大腦操作指引與任務觸發器", "scripts/ = Agent 的實體執行工具與外部串接腳本", "references/ = Agent 執行任務時查閱的權威知識依據"], "links": [], "raw_texts": ["Page 22 of 50.", "Codex", "AI Agent", "其中", "：", "SKILL.md", "= Agent 的操作說明", "scripts/", "= 可以實際執行的工具", "references/", "= Agent 執行任務時需要查閱的知識", "assets/", "= 範本、圖片、JSON、設定檔或其他必要素材", "不要把所有內容全部塞進 SKILL.md。", "如果是你自己", "的 Codex 專案，我會分成這 5 層", "🧠", "Agent 規則", "AGENTS.md", "告訴", "Codex「怎麼工作」", "🧩", "Agent 能力", ".agents/skills/", "告訴 Codex「有哪些專業技能」", "📚", "Agent 知識", "告訴 Codex「需要知道什麼」", "⚙️", "Agent 工具", "告訴 Codex「可以執行什麼」", "💻", "實際產品", "src/", "真正的應用程式", "如果是你自己的 Codex 專案，我會分成這 5 層", "🧠Agent 規則 AGENTS.md 告訴 Codex「怎麼工作」", "🧩 Agent 能力 .agents/skills/ 告訴 Codex「有哪些專業技能」", "📚 Agent 知識 references/ 告訴 Codex「需要知道什麼」", "⚙️ Agent 工具 scripts/ 告訴 Codex「可以執行什麼」", "💻 實際產品 src/ 真正的應用程式", "想「讓", "Codex 記住目前這個專案」", "請分析目前整個專案，將目前已經存在的功能、架構、程式規則、開發流程、UI 規範、資料流程、測試方式、部署方式與重要注意事項整理成", "Codex Agent 可以長期使用的專案知識。", "請完成以下工作：......", "下載提示詞", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 24, "image": "assets/slides/slide_24.png", "title": "Codex 專案五層架構全景圖", "subtitle": "規則、能力、方向、知識、執行資源五位一體", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "五層架構", "desc": "橘子老師提出的 Codex 5 層金字塔：🧠 Agent 規則 (AGENTS.md) ➔ 🧩 Agent 能力 (.agents/skills/) ➔ 🧭 Agent 方向 (GOALS/PLANS) ➔ 📚 專案知識 (README) ➔ 📦 執行資源 (scripts/references)。附完整提示詞下載。", "key_points": ["🧠 Agent 規則：告訴 Codex「怎麼工作」", "🧩 Agent 能力：賦予 Codex「能做什麼」", "🧭 Agent 方向：明確指引「要往哪裡去」", "📚 專案知識：提供「專案的完整脈絡」", "📦 執行資源：裝備「實際動手工具」"], "links": [{"label": "下載 5 層架構提示詞（Google Drive）", "url": "https://drive.google.com/file/d/1u_bcxq6y_-2MtvI2mfo2Mr9OvCLDVb6R/view?usp=drive_link"}], "raw_texts": ["Page 23 of 50.", "Codex", "AI Agent", "如果是你自己", "的 Codex 專案，我會分成這 5 層", "🧠", "Agent 規則", "AGENTS.md", "告訴", "Codex「怎麼工作」", "🧩", "Agent 能力", ".agents/skills/", "告訴 Codex「有哪些專業技能」", "📚", "Agent 知識", "references/", "告訴 Codex「需要知道什麼」", "⚙️", "Agent 工具", "scripts/", "告訴 Codex「可以執行什麼」", "💻", "實際產品", "src/", "真正的應用程式", "想「讓", "Codex 記住目前這個專案」", "請分析目前整個專案，將目前已經存在的功能、架構、程式規則、開發流程、UI 規範、資料流程、測試方式、部署方式與重要注意事項整理成", "Codex Agent 可以長期使用的專案知識。", "請完成以下工作：......", "想「讓 Codex 記住目前這個專案」", "請分析目前整個專案，將目前已經存在的功能、架構、程式規則、開發流程、UI 規範、資料流程、測試方式、部署方式與重要注意事項整理成 Codex Agent 可以長期使用的專案知識。", "下載提示詞", "試算表處理", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 25, "image": "assets/slides/slide_25.png", "title": "讓 Codex 深度記憶當前專案指令", "subtitle": "「讓 Codex 記住目前這個專案」標準 Prompt", "unit": 3, "unit_name": "Context 工程與 Skill 架構五層論", "badge": "記憶指令", "desc": "分享一段經過實戰驗證的高效提示詞：一鍵要求 Codex 分析現存功能、程式規則、開發流程、UI 規範與測試方式，自動沉澱為系統性檔案。", "key_points": ["全面檢視現有目錄結構與相依套件", "提取程式設計風格與資料傳遞模式", "將所有經驗轉化為永久保存的 Context 檔案"], "links": [], "raw_texts": ["Page 24 of 50.", "Codex", "AI Agent", "想「讓", "Codex 記住目前這個專案」", "請分析目前整個專案，將目前已經存在的功能、架構、程式規則、開發流程、UI 規範、資料流程、測試方式、部署方式與重要注意事項整理成", "Codex Agent 可以長期使用的專案知識。", "請完成以下工作：......", "下載提示詞", "試算表處理", "建立填報表單", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 26, "image": "assets/slides/slide_26.png", "title": "實戰一 · 試算表處理與自動化通知", "subtitle": "結合 Google 表單、試算表與 Gmail 的實用教育場景", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "實戰開場", "desc": "學校常常需要透過 Google 表單收集資訊（如帳號申請、資料調查），本單元示範如何讓 Codex 讀取試算表、進行邏輯篩選，並自動寄發個人化通知信件。", "key_points": ["串接 Google 表單與雲端試算表", "以自然語言下達多條件資料篩選規則", "自動套印姓名與資料，批次發送專屬郵件"], "links": [], "raw_texts": ["Page 25 of 50.", "Codex", "AI Agent", "試算表處理", "建立填報表單", "表單連結", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 27, "image": "assets/slides/slide_27.png", "title": "建立資料收集表單 · 範例展示", "subtitle": "線上表單欄位設計與即時收集機制", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "表單連結", "desc": "展示用於本次實作示範的 Google 表單。包含教師姓名、電子郵件、身分別代碼等關鍵欄位，提交後即時匯整至 Google 試算表。", "key_points": ["設計包含身份代碼的標準表單", "即時將填報紀錄同步至後端試算表", "提供學員實測填報，獲取真實測試數據"], "links": [{"label": "實作填報表單連結（Google 表單）", "url": "https://docs.google.com/forms/d/e/1FAIpQLSeRmT0FAdyNIt3wGYF7_MwJ9YYApgOb3ctjLD5wZGnUFlB7SA/viewform?usp=header"}], "raw_texts": ["Page 26 of 50.", "Codex", "AI Agent", "建立填報表單", "表單連結", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 28, "image": "assets/slides/slide_28.png", "title": "查看表單填答與試算表結構", "subtitle": "確認資料欄位型態、標題列與資料筆數", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "資料檢視", "desc": "進入表單連動的 Google 試算表，檢查各欄位名稱（如：時間戳記、電子郵件地址、姓名、身分代碼），確保欄位名稱清晰以便後續 AI 引用。", "key_points": ["確認試算表分享權限為允許讀取", "檢查身分欄位代碼（如：1=學生, 2=家長, 3=教師, 4=行政）", "確認 Email 格式正確無遺漏"], "links": [{"label": "表單填報連結", "url": "https://docs.google.com/forms/d/e/1FAIpQLSeRmT0FAdyNIt3wGYF7_MwJ9YYApgOb3ctjLD5wZGnUFlB7SA/viewform?usp=header"}], "raw_texts": ["Page 27 of 50.", "Codex", "AI Agent", "建立填報表單", "表單連結", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 29, "image": "assets/slides/slide_29.png", "title": "使用「@」符號精準引用檔案", "subtitle": "在對話框輸入 @ 快速連結雲端試算表", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "檔案引用", "desc": "在 Codex 對話輸入框中鍵入「@」，即可開啟專案檔案與外部雲端檔案選擇器，快速將目標 Google 試算表掛載進當前對話脈絡中。", "key_points": ["鍵入「@」啟動上下文快速參照選單", "支援搜尋專案內檔案與授權之 Google Drive 檔案", "免去反覆手動複製試算表內容的繁瑣流程"], "links": [], "raw_texts": ["Page 28 of 50.", "Codex", "AI Agent", "建立填報表單", "輸入:", "@", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 30, "image": "assets/slides/slide_30.png", "title": "確認檔案掛載狀態與上下文感知", "subtitle": "確保目標試算表已成功載入 Agent 工作記憶中", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "上下文掛載", "desc": "掛載成功後，對話框會顯示檔案標籤。Codex 將能即時讀取試算表中的最新分頁內容、欄位標題與每一筆紀錄。", "key_points": ["確認對話框出現試算表圖示與檔名標籤", "可先請 Codex 快速統計總筆數以確認連線正常", "隨時可新增多個關聯檔案共同分析"], "links": [], "raw_texts": ["Page 29 of 50.", "Codex", "AI Agent", "建立填報表單", "輸入:", "@", "輸入: @", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 31, "image": "assets/slides/slide_31.png", "title": "下達多條件篩選與寄信提示詞 (一)", "subtitle": "從試算表中篩選身份 3 或 4 之資料", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "篩選指令", "desc": "指令範例：「從這個試算表中篩選出身分別為 3 或 4 的資料，並以指定帳號寄發帳號重置通知信件，標題：google ai 帳號重置通知...」。", "key_points": ["明確指定篩選邏輯：身分別 == 3 或 4", "指定寄件者身分與信件主旨規範", "定義動態內容變數，如 (使用者名稱) 老師好"], "links": [], "raw_texts": ["Page 30 of 50.", "Codex", "AI Agent", "輸入:", "@", "從這個試算表中篩選出身分別為3或4的資料，並以jam@fyjh.ntpc.edu.tw帳號寄發帳號重置通知信件，信件標題: google ai帳號重置通知，內容: (使用者名稱)老師好，這個帳號(顯示帳號名稱)，將於7/15重置，請先備份該帳號相關重要資料以免重置後資料遺失，請先給我信件草稿，不要直接寄出，由我決定使否寄出信件", "把使用人欄位姓名換成明星的中文名字，email: 則改成隨意編排帳號名稱@gmail.com，重新另存一個試算表檔案給我，存在同一個資料夾中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 32, "image": "assets/slides/slide_32.png", "title": "信件內文格式與動態欄位代入 (二)", "subtitle": "個人化郵件模板精準套用", "unit": 4, "unit_name": "實戰一 · 實算表與郵件通知", "badge": "郵件格式", "desc": "詳細設定信件內容模板：「(使用者名稱)老師好，這是您的 google ai 帳號重置資訊...」，讓 AI 自動抓取對應姓名的資料進行個人化填入。", "key_points": ["動態欄位替換：將每位老師的真實姓名自動代入", "附帶重置連結、帳號說明與注意事項", "維持禮貌且一致的公務信函排版風格"], "links": [], "raw_texts": ["Page 31 of 50.", "Codex", "AI Agent", "從這個試算表中篩選出身分別為3或4的資料，並以jam@fyjh.ntpc.edu.tw帳號寄發帳號重置通知信件，信件標題: google ai帳號重置通知，內容: (使用者名稱)老師好，這個帳號(顯示帳號名稱)，將於7/15重置，請先備份該帳號相關重要資料以免重置後資料遺失，請先給我信件草稿，不要直接寄出，由我決定使否寄出信件", "把使用人欄位姓名換成明星的中文名字，email: 則改成隨意編排帳號名稱@gmail.com，重新另存一個試算表檔案給我，存在同一個資料夾中", "設定codex寄信使用的帳號", "在Chatgpt網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 33, "image": "assets/slides/slide_33.png", "title": "預覽發信名單與內容核對 (三)", "subtitle": "寄出前的最後安全檢查防線", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "發信預覽", "desc": "在真正寄發前，可要求 Codex 先列出符合條件的教師名單、收件信箱與信件預覽內容，確認無誤後再執行發送指令。", "key_points": ["先列表預覽：受影響的收件者共有幾位", "抽樣檢查信件內文是否正確替換動態變數", "落實人機協同的安全審核機制"], "links": [], "raw_texts": ["Page 32 of 50.", "Codex", "AI Agent", "從這個試算表中篩選出身分別為3或4的資料，並以jam@fyjh.ntpc.edu.tw帳號寄發帳號重置通知信件，信件標題: google ai帳號重置通知，內容: (使用者名稱)老師好，這個帳號(顯示帳號名稱)，將於7/15重置，請先備份該帳號相關重要資料以免重置後資料遺失，請先給我信件草稿，不要直接寄出，由我決定使否寄出信件", "把使用人欄位姓名換成明星的中文名字，email: 則改成隨意編排帳號名稱@gmail.com，重新另存一個試算表檔案給我，存在同一個資料夾中", "設定codex寄信使用的帳號", "在Chatgpt網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 34, "image": "assets/slides/slide_34.png", "title": "設定 Codex 寄信授權帳號 (一)", "subtitle": "在 ChatGPT 網頁版中配置郵件寄發身分", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "寄件設定", "desc": "說明如何在 ChatGPT 網頁版或 Codex 整合設定中，授權綁定 Google 帳號（如 jam@fyjh.ntpc.edu.tw），確保具備合法的寄信權限。", "key_points": ["完成 Google Workspace OAuth 授權綁定", "設定預設發信人名稱與電子郵件地址", "避免信件被收件端誤判為垃圾信件"], "links": [], "raw_texts": ["Page 33 of 50.", "Codex", "AI Agent", "設定codex寄信使用的帳號", "在Chatgpt網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 35, "image": "assets/slides/slide_35.png", "title": "寄件連線驗證與授權測試 (二)", "subtitle": "測試 Gmail API 連線與權限許可", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "連線測試", "desc": "執行一次測試信發送，確認授權 Token 有效、寄件端能正常連線至 Gmail 伺服器，並確認收件匣能順利收到格式正確的測試郵件。", "key_points": ["發送測試信至自身信箱驗證連線", "檢查信件主旨、排版與附件是否正常", "確認發信配額與每日限制"], "links": [], "raw_texts": ["Page 34 of 50.", "Codex", "AI Agent", "設定codex寄信使用的帳號", "在Chatgpt網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 36, "image": "assets/slides/slide_36.png", "title": "自動化批次寄信實戰執行 (三)", "subtitle": "高效完成數十位教師帳號通知信發送", "unit": 4, "unit_name": "實戰一 · 試算表與郵件通知", "badge": "批次發送", "desc": "啟動自動發送流程。Codex 依序處理每一位符合條件的名單，完成個人化通知信發送，並於畫面回報發送成功清單與紀錄日誌。", "key_points": ["自動依序發送個人化郵件", "即時回報發送成功筆數與失敗名單", "大幅節省行政同仁數小時的人工逐一發信時間"], "links": [], "raw_texts": ["Page 35 of 50.", "Codex", "AI Agent", "設定codex寄信使用的帳號", "在Chatgpt網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 37, "image": "assets/slides/slide_37.png", "title": "實戰二 · 建立財產報廢申請單", "subtitle": "從零碎照片與試算表自動填寫正式報廢公文", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "報廢實戰", "desc": "學校設備損壞要報廢，往往需要找照片、對財產編號、填報廢單，步驟繁瑣。本單元示範如何透過專案資料夾與素材整合，讓 AI 一鍵完成公文套印。", "key_points": ["整合設備現況照片、財產清冊與報廢申請單範本", "AI 辨識照片損壞特徵並比對財產編號", "自動產生格式完美的 Word/Google Doc 報廢申請公文"], "links": [], "raw_texts": ["Page 36 of 50.", "Codex", "AI Agent", "建立財產報廢申請單", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 38, "image": "assets/slides/slide_38.png", "title": "建立專屬專案資料夾與工作區", "subtitle": "專案 ➔ ＋ ➔ 指定專案名稱與資料夾路徑", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "專案建立", "desc": "在 Codex 中點擊「專案 ➔ ＋」，建立獨立的工作專區（例如：財產報廢自動化）。將與此任務相關的檔案集中管理，避免跨任務干擾。", "key_points": ["為特定行政任務建立專屬工作專區", "集中管理該任務的輸入素材與輸出產物", "建立清晰的資料夾層級結構"], "links": [], "raw_texts": ["Page 37 of 50.", "Codex", "AI Agent", "建立財產報廢申請單", "建立專案資料夾", "專案 --> + -", "->指定專案名稱，指定資料夾", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 39, "image": "assets/slides/slide_39.png", "title": "匯整報廢申請四大核心素材", "subtitle": "申請單範本、範例照片、財產檔案、提示詞", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "素材雲端", "desc": "橘子老師提供了完整實作素材包：包含財產報廢申請單範本 (DOCX)、範例報廢照片 (Drive)、範例財產清冊檔案 (Sheet) 與完整提示詞檔案。", "key_points": ["📄 財產報廢申請單範本：標準公文排版", "📷 範例照片：設備損壞外觀實拍照", "📊 範例財產清冊：廠牌、購置年份、財產編號", "💡 提示詞檔案：引導 AI 精準比對與填表的咒語"], "links": [{"label": "財產報廢申請單範本（Google Doc）", "url": "https://docs.google.com/document/d/1ycXsCTt2Q-PgNkp6wz-OUnCMr-0ByBpL/edit?usp=drive_link&ouid=114425903125895498189&rtpof=true&sd=true"}, {"label": "損壞設備範例照片（Google Drive）", "url": "https://drive.google.com/file/d/1Ur8aPxQ8N5ccepBKg439qcljlbMBDYyn/view?usp=drive_link"}, {"label": "範例財產清冊檔案（Google Sheet）", "url": "https://docs.google.com/spreadsheets/d/1hllWwzfOnPZ3Vbfnm5qgS90Vd1uTIc2g/edit?usp=drive_link&ouid=114425903125895498189&rtpof=true&sd=true"}, {"label": "報廢實戰提示詞檔案（Google Drive）", "url": "https://drive.google.com/file/d/1G253bCwUvQN80D7Y_bRCZiGyOTZSr8XW/view?usp=drive_link"}], "raw_texts": ["Page 38 of 50.", "Codex", "建立財產報廢申請單", "建立專案資料夾", "專案 --> + -", "->指定專案名稱，指定資料夾", "專案 --> + -->指定專案名稱，指定資料夾", "財產報廢申請單", "範例照片", "範例財產檔案", "提示詞", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 40, "image": "assets/slides/slide_40.png", "title": "將報廢流程固化為全域 SKILL", "subtitle": "「很好，將這個工作流程建立全域SKILL」", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "固化Skill", "desc": "當測試成功後，直接下達指令：「很好，將這個工作流程建立全域SKILL」。Codex 會自動將上述比對、填表、產出公文的步驟封裝為永久可用的全域技能！", "key_points": ["一句話將成功經驗封裝為 Skill 模組", "自動生成 SKILL.md、定義觸發詞與執行流程", "未來只要有報廢需求，直接呼叫 Skill 即可一鍵處理"], "links": [{"label": "財產報廢單範本", "url": "https://docs.google.com/document/d/1ycXsCTt2Q-PgNkp6wz-OUnCMr-0ByBpL/edit"}, {"label": "提示詞下載", "url": "https://drive.google.com/file/d/1G253bCwUvQN80D7Y_bRCZiGyOTZSr8XW/view"}], "raw_texts": ["Page 39 of 50.", "Codex", "建立財產報廢申請單", "建立專案資料夾", "專案 --> + -", "->指定專案名稱，指定資料夾", "財產報廢申請單", "範例照片", "範例財產檔案", "提示詞", "很好，將這個工作流程建立全域SKILL", "建立SKILL", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 41, "image": "assets/slides/slide_41.png", "title": "實戰三 · AI 自動課前複習題生成", "subtitle": "教學自動化神技：結合課堂紀錄、課本與自動出題", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "出題實戰", "desc": "進入第三大實戰場景：結合雲端「教師課堂紀錄系統」試算表與教科書內容，由 AI 自動找出班級最近上課進度，生成 5 題複習題與 5 題延伸素養題。", "key_points": ["自動讀取各班最近一次課堂教學進度", "比對教材資料庫生成 5 題核心複習題", "延伸設計 5 題進階應用素養題"], "links": [], "raw_texts": ["Page 40 of 50.", "Codex", "建立財產報廢申請單", "財產報廢申請單", "範例照片", "範例財產檔案", "提示詞", "很好，將這個工作流程建立全域SKILL", "建立SKILL", "AI自動課前複習題生成", "SKILL", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 42, "image": "assets/slides/slide_42.png", "title": "設計課前複習題生成全域 SKILL (一)", "subtitle": "「幫我把以下提示詞轉成正確的SKILL格式」", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "Skill設計", "desc": "建立「課前複習題生成全域SKILL」的核心提示詞第一部分：指定讀取 Google Drive「教師課堂紀錄系統」試算表，列出班級與科目資料。", "key_points": ["步驟 1：讀取指定 Google 帳號雲端硬碟的試算表", "步驟 2：解析各班級與科目資料清單", "步驟 3：定位最近一次課程記錄內容"], "links": [], "raw_texts": ["Page 41 of 50.", "Codex", "建立財產報廢申請單", "很好，將這個工作流程建立全域SKILL", "建立SKILL", "AI自動課前複習題生成", "SKILL", "設計複習題生成SKILL", "幫我把以下提示詞轉成正確的SKILL格式", "課前複習題生成全域SKILL", "1.讀取jaremy.tw@gmail.com 帳號雲端硬碟教師課堂紀錄系統 資料夾中試", "算表檔案資料，列出班級科目資料", "2.讀取各班級科目最近一次的課程內容紀錄", "3.參考教師課堂紀錄系統 資料夾中課本資料，生成5題與最近一次課程有關的", "複習題，另外5題則為前5題類似的延伸題", "4.將生成題目以google文件儲存在教師課堂紀錄系統", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 43, "image": "assets/slides/slide_43.png", "title": "複習題生成與雲端文件自動歸檔 (二)", "subtitle": "生成 5 題複習 + 5 題延伸，自動建立日期資料夾並寄信", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "自動歸檔", "desc": "生成題目後自動以 Google 文件儲存在「複習題資料夾」中的當日日期資料夾中（若無則自動建立），並以 Gmail 程式自動寄送給任課教師，全程無須確認！", "key_points": ["5 題進度複習題 + 5 題進階延伸思考題", "自動在雲端硬碟建立當日日期資料夾並存成 Google Doc", "以 Gmail 自動寄達教師信箱，信件直接寄出無須二次手動確認"], "links": [], "raw_texts": ["Page 42 of 50.", "Codex", "AI自動課前複習題生成", "SKILL", "設計複習題生成SKILL", "幫我把以下提示詞轉成正確的SKILL格式", "課前複習題生成全域SKILL", "1.讀取jaremy.tw@gmail.com 帳號雲端硬碟教師課堂紀錄系統 資料夾中試", "算表檔案資料，列出班級科目資料", "2.讀取各班級科目最近一次的課程內容紀錄", "3.參考教師課堂紀錄系統 資料夾中課本資料，生成5題與最近一次課程有關的", "複習題，另外5題則為前5題類似的延伸題", "4.將生成題目以google文件儲存在教師課堂紀錄系統", "1.讀取jaremy.tw@gmail.com 帳號雲端硬碟教師課堂紀錄系統 資料夾中試算表檔案資料，列出班級科目資料", "3.參考教師課堂紀錄系統 資料夾中課本資料，生成5題與最近一次課程有關的複習題，另外5題則為前5題類似的延伸題", "4.將生成題目以google文件儲存在教師課堂紀錄系統 資料夾中的複習題資料夾裡的當日資料夾中(如果沒有則建立這個資料夾)，並且以gmail程式mail 給 jaremy.tw@gmail.com，信件直接寄出不用使用者確認", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 44, "image": "assets/slides/slide_44.png", "title": "雲端排程設定 · 釋放雙手的終極境界", "subtitle": "每週日早上 9:00 自動觸發出題，執行到學期末", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "雲端排程", "desc": "透過雲端排程指令：「雲端排程，每週重複，每週日上午9:00 /pre-class..... 生成課前複習題，執行到2027-01-17 為止」。完全不必人工介入！", "key_points": ["設定定期觸發時間：每週日上午 9:00", "自動呼叫 /pre-class 技能執行完整出題與寄信工作流", "指定任務截止日期：自動運行至學期末（2027-01-17）"], "links": [], "raw_texts": ["Page 43 of 50.", "Codex", "AI自動課前複習題生成", "設計複習題生成SKILL", "幫我把以下提示詞轉成正確的SKILL格式", "課前複習題生成全域SKILL", "1.讀取jaremy.tw@gmail.com 帳號雲端硬碟教師課堂紀錄系統 資料夾中試", "算表檔案資料，列出班級科目資料", "2.讀取各班級科目最近一次的課程內容紀錄", "3.參考教師課堂紀錄系統 資料夾中課本資料，生成5題與最近一次課程有關的", "複習題，另外5題則為前5題類似的延伸題", "4.將生成題目以google文件儲存在教師課堂紀錄系統", "雲端排程", "雲端排程，每週重複，每週日上午9:00", "/pre-class..... 生成課前複習題，執行到2027-01-17 為止", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 45, "image": "assets/slides/slide_45.png", "title": "雲端排程排定語法結構解析", "subtitle": "自然語言排程指令與週期參數規範", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "排程語法", "desc": "深入剖析排程指令：「每週重複，每週日上午9:00 /pre-class..... 生成課前複習題，執行到2027-01-17 為止」。展示自然語言如何精確轉換為系統 Cron 定時任務。", "key_points": ["頻率定義：每週重複 (Weekly recurrence)", "時間觸發點：每週日 09:00 AM", "執行內容：調用指定 Skill 與自動參數傳遞", "終止條件：有效日期邊界保護"], "links": [], "raw_texts": ["Page 44 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程", "雲端排程，每週重複，每週日上午9:00", "/pre-class..... 生成課前複習題，執行到2027-01-17 為止", "雲端排程，每週重複，每週日上午9:00 /pre-class..... 生成課前複習題，執行到2027-01-17 為止", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 46, "image": "assets/slides/slide_46.png", "title": "排程狀態檢查與日誌監控", "subtitle": "確認排程已被系統排定並處於活動中狀態", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "排程監控", "desc": "檢視排程管理器（Schedule Manager），確認任務已處於待命（Scheduled/Active）狀態，並能查閱歷史執行日誌與成功回報狀態。", "key_points": ["查閱排程列表中的定時任務名稱與下次執行時間", "確認環境變數與 API 權限在排程觸發時保持有效", "建立異常通知機制，若出題失敗即時提醒"], "links": [], "raw_texts": ["Page 45 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程", "雲端排程，每週重複，每週日上午9:00", "/pre-class..... 生成課前複習題，執行到2027-01-17 為止", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 47, "image": "assets/slides/slide_47.png", "title": "ChatGPT 網頁版中的排程操作介面 (一)", "subtitle": "透過網頁圖形化介面輕鬆管理定時任務", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "網頁排程", "desc": "示範在 ChatGPT 網頁版中直接查看與編輯雲端排程的步驟，即便不懂 Cron 語法的非技術教師也能直覺開啟或暫停排程。", "key_points": ["在網頁端直觀檢視每週預約任務", "支援一鍵暫停、修改執行時間或刪除排程", "降低教師使用自動化技術的門檻"], "links": [], "raw_texts": ["Page 46 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程", "雲端排程 : 在ChatGPT 網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 48, "image": "assets/slides/slide_48.png", "title": "ChatGPT 網頁版排程細節設定 (二)", "subtitle": "調整通知對象、附檔規則與重試機制", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "排程設定", "desc": "進一步微調排程細節：包含信件主旨動態日期標註、附件轉存格式（Google Doc / PDF），以及網路不穩定時的自動重試策略。", "key_points": ["設定動態檔名格式，如【課前複習題_YYYYMMDD】", "自動轉換輸出文件格式以符合教學需求", "穩健的重試與錯誤容忍機制"], "links": [], "raw_texts": ["Page 47 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程", "雲端排程 : 在ChatGPT 網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 49, "image": "assets/slides/slide_49.png", "title": "排程執行成果驗證與自動歸檔 (三)", "subtitle": "時間一到，教師信箱準時收到客製題目公文", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "成果驗證", "desc": "驗證成果：每週日上午 9:00，系統無聲無息地完成課程紀錄讀取、生成 10 題複習與延伸題、建立 Google Doc 並寄達教師 Gmail。教師週一上班即可直接使用！", "key_points": ["零人工介入，自動完成全套課前備課工作", "雲端資料夾井然有序地按日期歸檔各週題目", "教師享有充裕的時間進行課堂互動設計"], "links": [], "raw_texts": ["Page 48 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程 : 在ChatGPT 網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}, {"page": 50, "image": "assets/slides/slide_50.png", "title": "結語 · 打造專屬的 AI Agent 教師團隊", "subtitle": "邁向自主學習與行政賦能的未來教育新典範", "unit": 5, "unit_name": "實戰二與三 · 報廢申請與自動排程出題", "badge": "研習結語", "desc": "透過今天的研習，我們完整掌握了 Codex、Context Engineering、自訂 SKILL 與雲端排程。讓 AI Agent 成為你最忠實可靠的行政與教學小幫手，每天開心玩 AI！", "key_points": ["從學會提示詞 ➔ 到構建專屬 Agent 團隊", "將例行瑣事全面自動化，專注於教育的溫度與陪伴", "持續在「每天開心玩Ai」共學群中交流精進！"], "links": [{"label": "橘子老師 FB 專頁", "url": "https://www.facebook.com/ju.laoshi"}, {"label": "橘子老師教室粉專", "url": "https://www.facebook.com/profile.php?id=61580433065847"}, {"label": "每天開心玩Ai 社群（密碼 happyai）", "url": "https://line.me/ti/g2/WcNwA_0Zf-ciDHCVodeEpFFBLd0PmGwKlhRprg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"}], "raw_texts": ["Page 49 of 50.", "Codex", "AI自動課前複習題生成", "雲端排程 : 在ChatGPT 網頁版中", "A", "Toolbar", "Previous page", "Go to page", "Next page", "Zoom in and out", "More", "Enter full screen", "faded", "Dark blue background"]}];
+  </script>
+  <!-- 主互動腳本 -->
+  <script src="deck.js"></script>
+</body>
+</html>
